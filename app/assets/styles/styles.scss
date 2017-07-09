@@ -1,3 +1,12 @@
 @import 'normalize/_import-now.scss';
+@import 'base/_variables.scss';
 @import 'base/_global.scss';
+@import 'base/_mixins.scss';
+@import 'modules/_button.scss';
+@import 'modules/_main-wrapper.scss';
+@import 'modules/_content-container.scss';
+@import 'modules/_header.scss';
+@import 'modules/_form.scss';
 @import 'modules/_map.scss';
+@import 'modules/_weather-info.scss';
+@import 'modules/_city-info.scss';

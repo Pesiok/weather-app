@@ -11,15 +11,20 @@ class View {
 
     DOMEvents() {
         window.addEventListener('DOMContentLoaded', () => {
-            this._elements.button.addEventListener('click', () => {
-                this._model.emit('weather');
-            });
+            // this._elements.button.addEventListener('click', () => {
+            //     this._model.emit('weather');
+            // });
+
+            this._elements.searchForm.addEventListener('submit', event => {
+                this._model.emit('city-search', event);
+            })
+
         })
     }
 
     updateWeather() {
         const weather = this._model.weather;
-        this._elements.weatherContainer.innerHTML = JSON.stringify(weather);
+        // this._elements.weatherContainer.innerHTML = JSON.stringify(weather);
         console.log(weather);
     }
 }

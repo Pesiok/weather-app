@@ -3,7 +3,7 @@ import View from './modules/View.js';
 import Controller from './modules/Controller.js';
 
 const elements = {
-    button: document.getElementById('getWeather'),
+    searchForm: document.getElementById('searchForm'),
     mapContainer: document.getElementById('map'),
     weatherContainer: document.getElementById('weather-con')
 }

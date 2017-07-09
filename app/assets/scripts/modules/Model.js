@@ -7,7 +7,8 @@ class Model {
         this._pubsub = new PubSub();
         this.coords = [];
         this.settings = {
-            mapKey: 'AIzaSyCAoZKb18BDrDlKTiNGe_K6NsfRXxE1IqE',
+            mapKey: 'AIzaSyCAoZKb18BDrDlKTiNGe_K6NsfRXxE1IqE'
+
         };
         this.weather = {};
 

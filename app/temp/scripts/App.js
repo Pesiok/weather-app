@@ -102,13 +102,22 @@ var Controller = function () {
 
         // initialize model events
         this.modelEvents();
+
+        // get weather from geolocation
+        this.getWeather();
     }
 
     _createClass(Controller, [{
         key: 'modelEvents',
         value: function modelEvents() {
-            this._model.addEventListener('weather', this.getWeather.bind(this));
-            this.getWeather();
+            var _this2 = this;
+
+            this._model.addEventListener('weather', function () {
+                return _this2.getWeather();
+            });
+            this._model.addEventListener('city-search', function (event) {
+                return _this2.parseCoords(event);
+            });
         }
     }, {
         key: 'mapEvents',
@@ -122,14 +131,14 @@ var Controller = function () {
     }, {
         key: 'setUpMap',
         value: function setUpMap() {
-            var _this2 = this;
+            var _this3 = this;
 
             var coords = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this._model.coords;
 
             var scriptTag = document.createElement('script');
             var apiKey = this._model.settings.mapKey;
             var initMap = function initMap() {
-                var map = new google.maps.Map(_this2._view._elements.mapContainer, {
+                var map = new google.maps.Map(_this3._view._elements.mapContainer, {
                     center: {
                         lat: coords[0],
                         lng: coords[1]
@@ -144,9 +153,9 @@ var Controller = function () {
                     map: map
                 });
                 // add map and marker reference to the model
-                _this2._model.appMap = { map: map, marker: marker };
+                _this3._model.appMap = { map: map, marker: marker };
                 // initialize map events
-                _this2.mapEvents();
+                _this3.mapEvents();
             };
             // add initMap to global env
             window.initMap = initMap;
@@ -158,16 +167,29 @@ var Controller = function () {
     }, {
         key: 'getWeather',
         value: function getWeather(coords) {
-            var _this3 = this;
+            var _this4 = this;
 
             if ('geolocation' in navigator) {
                 (0, _weatherAt.weatherAt)(coords).then(function (weather) {
-                    _this3._model.weather = weather;
-                    _this3._view.updateWeather();
+                    _this4._model.weather = weather;
+                    _this4._view.updateWeather();
                 });
             } else {
                 alert("Your browser doesn't support geolocation!");
             }
+        }
+    }, {
+        key: 'parseCoords',
+        value: function parseCoords(event) {
+            event.preventDefault();
+            var value = event.target.children.searchCity.value;
+        }
+    }, {
+        key: 'findCoords',
+        value: function findCoords(event) {
+            // const value = event.target.children.searchCity.value;
+
+            // event.preventDefault();
         }
     }]);
 
@@ -207,6 +229,7 @@ var Model = function () {
         this.coords = [];
         this.settings = {
             mapKey: 'AIzaSyCAoZKb18BDrDlKTiNGe_K6NsfRXxE1IqE'
+
         };
         this.weather = {};
     }
@@ -260,8 +283,12 @@ var View = function () {
             var _this = this;
 
             window.addEventListener('DOMContentLoaded', function () {
-                _this._elements.button.addEventListener('click', function () {
-                    _this._model.emit('weather');
+                // this._elements.button.addEventListener('click', () => {
+                //     this._model.emit('weather');
+                // });
+
+                _this._elements.searchForm.addEventListener('submit', function (event) {
+                    _this._model.emit('city-search', event);
                 });
             });
         }
@@ -269,7 +296,7 @@ var View = function () {
         key: 'updateWeather',
         value: function updateWeather() {
             var weather = this._model.weather;
-            this._elements.weatherContainer.innerHTML = JSON.stringify(weather);
+            // this._elements.weatherContainer.innerHTML = JSON.stringify(weather);
             console.log(weather);
         }
     }]);
@@ -301,7 +328,7 @@ var _Controller2 = _interopRequireDefault(_Controller);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var elements = {
-    button: document.getElementById('getWeather'),
+    searchForm: document.getElementById('searchForm'),
     mapContainer: document.getElementById('map'),
     weatherContainer: document.getElementById('weather-con')
 };

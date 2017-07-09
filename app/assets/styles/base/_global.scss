@@ -1,8 +1,16 @@
 html {
+    box-sizing: border-box;
+
     font-size: 62.5%;
+
+    font-family: 'Roboto', sans-serif;
+    line-height: normal;
 }
 
-.weather-con {
-    font-size: 1.8rem;
-    background-color: rgba(240, 240, 245, 0.8);
+*, *::after, *::before {
+    box-sizing: inherit;
+}
+
+body {
+    background-color: $materialBackground;
 }

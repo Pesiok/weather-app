@@ -1,0 +1,34 @@
+.form {
+    height: 3rem;
+    display: flex;
+
+    &__label {
+        @include visuallyHidden();
+    }
+
+    &__input {
+        font-size: 1.3rem;
+        width: 25rem;
+        padding: 0.8rem;
+
+        border: 0.13rem solid $primary;
+
+        &::placeholder {
+            color: $primaryDark;
+        }
+    }
+
+    &__button {
+       display: block;
+       background: none;
+       border: none;
+
+       background-color: $primary;
+    }
+
+    &__icon {
+        font-size: 1.8rem;
+        color: $primaryLight;
+        vertical-align: middle; 
+    }
+}

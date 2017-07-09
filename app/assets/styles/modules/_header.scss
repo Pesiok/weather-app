@@ -1,0 +1,22 @@
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+
+    height: 7rem;
+
+    background-color: $primaryLight;
+
+    text-align: center;
+
+    &__title {
+        margin: 0;
+
+        font-size: 3rem;
+    }
+
+    &__subtitle {
+        margin: 0;
+        
+    }
+}

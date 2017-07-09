@@ -14,12 +14,16 @@ class Controller {
         });
 
         // initialize model events
-        this.modelEvents()
+        this.modelEvents();
+
+        // get weather from geolocation
+        this.getWeather();
     }
 
     modelEvents() {
-        this._model.addEventListener('weather', this.getWeather.bind(this));
-        this.getWeather();
+        this._model.addEventListener('weather', () => this.getWeather());
+        this._model.addEventListener('city-search', event => this.parseCoords(event));
+
     }
 
     mapEvents() {
@@ -70,6 +74,17 @@ class Controller {
         } else {
             alert("Your browser doesn't support geolocation!");
         }
+    }
+
+    parseCoords(event) {
+        event.preventDefault();    
+        const value = event.target.children.searchCity.value;
+    }
+
+    findCoords(event) {
+        // const value = event.target.children.searchCity.value;
+        
+        // event.preventDefault();
     }
 }
 
