@@ -1,0 +1,11 @@
+.map {
+    position: absolute;
+    height: 500px;
+    width: 500px;
+
+    &__canvas {
+        width: 100%;
+        height: 100%;
+
+    }
+}

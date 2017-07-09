@@ -1,0 +1,41 @@
+{
+  "name": "weather-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Pesiok/weather-app.git"
+  },
+  "author": "Pesio",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Pesiok/weather-app/issues"
+  },
+  "homepage": "https://github.com/Pesiok/weather-app#readme",
+  "dependencies": {
+    "babel-polyfill": "^6.23.0",
+    "normalize-scss": "^6.0.0",
+    "whatwg-fetch": "^2.0.3"
+  },
+  "devDependencies": {
+    "auto-prefixer": "^0.4.2",
+    "babel-core": "^6.24.0",
+    "babel-loader": "^6.4.1",
+    "babel-preset-latest": "^6.24.0",
+    "browser-sync": "^2.18.8",
+    "del": "^2.2.2",
+    "gulp": "^3.9.1",
+    "gulp-cssnano": "^2.1.2",
+    "gulp-rename": "^1.2.2",
+    "gulp-rev": "^7.1.2",
+    "gulp-sass": "^3.1.0",
+    "gulp-uglify": "^2.1.2",
+    "gulp-usemin": "^0.3.28",
+    "gulp-watch": "^4.3.11",
+    "webpack": "^2.3.2"
+  }
+}
