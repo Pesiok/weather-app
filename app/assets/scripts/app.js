@@ -1,16 +1,39 @@
-import Model from './modules/Model.js';
-import View from './modules/View.js';
-import Controller from './modules/Controller.js';
+import AppModel from './models/appModel'; 
+import SearchFormView from './views/SearchFormView'; 
+import WeatherView from './views/WeatherView'; 
+import InfoView from './views/InfoView'; 
+import SearchFormController from './controllers/SearchFormController';
 
-const elements = {
-    searchForm: document.getElementById('searchForm'),
-    mapContainer: document.getElementById('map'),
-    weatherContainer: document.getElementById('weather-con')
-}
+'use strict'; 
 
-const model = new Model();
-const view = new View(model, elements);
-const controller = new Controller(model, view);
+// main model
+const appModel = new AppModel();
+
+// controllers
+const searchFormController = new SearchFormController(appModel)
+
+// views
+const searchFormView = new SearchFormView(appModel, searchFormController);
+const weatherView = new WeatherView(appModel);
+const infoView = new InfoView(appModel);
+
+// start app on load
+
+// document.addEventListener('DOMContentLoaded', () => {
+//     appModel.getCoords()
+//         .then(() => appModel.getWeatherInfo())
+//         .then(weather => appModel.set('weater', weather))
+//         .then(() => getCityInfo(appModel.get('weather').city))
+//         .then(location => appModel.set('location', location))
+//         .then(() => appModel.getWikiInfo())
+//         .then(info => appModel.set('info', info))
+//         .then(() => appModel.emitEvent('change-all'))
+//         .catch(error => console.log(error));
+// });
+
+
+
+
 
 
 

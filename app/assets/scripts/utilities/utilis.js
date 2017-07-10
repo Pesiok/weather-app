@@ -1,8 +1,8 @@
+import jsonp from './jsonp.js';
+
 'use strict';
 
-import jsonp from './jsonp';
-
-export const getCoords = () => {
+export const fetchCoords = () => {
     return new Promise((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(position => {
             resolve([position.coords.latitude, position.coords.longitude]);
@@ -24,21 +24,35 @@ export const parseCoords = coords => {
             });
         }
 
-        resolve(coords.map(coord => Math.round(coord)));
+        resolve(coords);
     });
 }
 
-export const fetchWeatherInfo = coords => {
-    const key = 'ecade6d2f60bfbb23bf403c610064563', 
-    lat = coords[0], lon = coords[1],
-    url = `http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${key}`;
+export const fetchCityInfo = (value, key) => {
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${value}&key=${key}`;
+
+    return fetch(url).then(response => response.json());
+}
+
+export const parseCityInfo = data => {
+    if (!data.status === 'OK') {
+        throw new Error('Incorrect data status');
+    } 
+
+    return {
+        address: data.results[0].formatted_address,
+        coords: [data.results[0].geometry.location.lat, data.results[0].geometry.location.lng]
+    }
+}
+
+export const fetchWeatherInfo = (coords, key) => {
+    const [lat, lon] = coords;
+    const url = `http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${key}`;
 
     return jsonp(url).then(response => response.json());
-    
 }
 
 export const parseWeatherInfo = data => {
-    console.log(data);
     return {
         country: data.sys.country,
         time: new Date(data.dt * 1000),
@@ -56,20 +70,22 @@ export const parseWeatherInfo = data => {
     };
 }
 
-export const weatherAt = coords => {
-    if (coords) {
-        return parseCoords(coords)
-            .then(fetchWeatherInfo)
-            .then(parseWeatherInfo)
-            .catch(err => console.error(err.message));
-    } else {
-        return getCoords()
-            .then(parseCoords)
-            .then(fetchWeatherInfo)
-            .then(parseWeatherInfo)
-            .catch(err => console.error(err.message));
+export const fetchWikiInfo = value => {
+    const url = `https://en.wikipedia.org/w/api.php?action=query&prop=extracts&format=json&exintro=&titles=${value}`;
+
+    return jsonp(url).then(response => response.json());
+}
+
+export const parseWikiInfo = data => {
+    const info = Object.values(data.query.pages)[0];
+    // console.log(data);
+    return {
+        title: info.title,
+        link: `http://en.wikipedia.org/?curid=${info.pageid}`,
+        extract: info.extract
     }
 }
+
 
 
 
