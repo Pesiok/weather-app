@@ -13,13 +13,20 @@ class SearchFormController extends Controller {
         model.getCityInfo(value)
             .then(location => {
                 model.set('location', location);
-                model.set('coords', location.coords);
+
+                if (model.get('coords')) {
+                    model.set('coords', location.coords);
+                    model.emitEvent('change-coords');
+                } else {
+                    model.set('coords', location.coords);
+                    model.emitEvent('initial-coords');
+                }
             })
             .then(() => model.getWeatherInfo())
             .then(weather => model.set('weather', weather))
-            .then(() => model.getWikiInfo(model.get('location').name))
+            .then(() => model.getWikiInfo(value))
             .then(info => model.set('info', info))
-            .then(() => model.emitEvent('change-all'))
+            .then(() => model.emitEvent('change-all'))  
             .catch(error => console.log(error));
     }
 

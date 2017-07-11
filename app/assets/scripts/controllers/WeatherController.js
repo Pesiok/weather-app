@@ -11,7 +11,15 @@ class WeatherController extends Controller {
         const model = this.getModel();
 
         model.getCoords()
-            .then(coords => model.set('coords', coords))
+            .then(coords => {
+                if (model.get('coords')) {
+                    model.set('coords', coords);
+                    model.emitEvent('change-coords');
+                } else {
+                    model.set('coords', coords);
+                    model.emitEvent('initial-coords');
+                }
+            })
             .then(() => model.getWeatherInfo(model.get('coords')))
             .then(weather => model.set('weather', weather))
             .then(() => model.getCityInfo(model.get('weather').city))
@@ -24,18 +32,11 @@ class WeatherController extends Controller {
 
     onChange(checkBoxState) {
         const model = this.getModel();
-        let system;
 
-        if (checkBoxState) {
-            system = 'metric';
-        } else {
-            system = 'imperial';
-        }
+        const system = (checkBoxState) ? 'metric' : 'imperial';
 
-        model.changeSystem(system)
-            .then(parsedWeatherInfo => model.set('weather', parsedWeatherInfo))
-            .then(() => model.emitEvent('change-weather'))
-            .catch(error => console.log(error))
+        model.setSystem(system);
+        model.emitEvent('change-weather');
     }
 
     onLoad() {

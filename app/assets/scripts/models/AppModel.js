@@ -17,10 +17,11 @@ class AppModel extends Model {
     constructor() {
         super();
         this._settings = config;
-        this.set('location', {});
-        this.set('coords', []);
-        this.set('weather', {});
-        this.set('info', {});
+        this.set('location', null);
+        this.set('coords', null);
+        this.set('weather', null);
+        this.set('info', null);
+        this.set('map', null);
     }
 
     init() {
@@ -56,24 +57,18 @@ class AppModel extends Model {
         return parseCoords(coords)
             .then(parsedCoords => fetchWeatherInfo(parsedCoords, weatherKey))
             .then(weatherInfo => parseWeatherInfo(weatherInfo, system));
-        
     }
 
     getWikiInfo(city) {
         return fetchWikiInfo(city).then(parseWikiInfo);
     }
 
-    changeSystem(system) {
-        const weatherInfo = this.get('weather');
-        const weatherKey = this.getSettings().weatherKey;
-        const coords = this.get('coords');
-
-        this._settings.system = system;
-        localStorage.setItem('app-system', system);
-
-        return fetchWeatherInfo(coords, weatherKey)
-            .then(weatherInfo => parseWeatherInfo(weatherInfo, system));
+    setSystem(newSystem) {
+        this._settings.system = newSystem;
+        localStorage.setItem('app-system', newSystem);
     }
+
+
 
 }
 

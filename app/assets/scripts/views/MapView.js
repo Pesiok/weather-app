@@ -1,4 +1,5 @@
-import {View} from '../utilities/MVC.js';
+import {View} from '../utilities/MVC.js'; 
+// import {Map, Marker} from '../utilities/Maps.js';
 
 'use strict';
 
@@ -7,7 +8,16 @@ class MapView extends View {
         super(model, controller);
         this.setRoot(document.getElementById('map'));
 
-        this.setUpMap();
+        this.events();
+    }
+
+    events() {
+        this.getModel().addEventListener('initial-coords', () => this.setUpMap());
+        this.getModel().addEventListener('change-coords', () => this.getController().onCoordsChange());
+    }
+
+    mapEvents() {
+        this.getModel().get('map').map.addListener('dblclick', event => this.getController().onDbClick(event));
     }
 
     setUpMap() {
@@ -31,10 +41,9 @@ class MapView extends View {
                 },
                 map
             });
-            // add map and marker reference to the model
-            this._model.appMap = {map, marker};
+            model.set('map', {map, marker});
              // initialize events
-            this.events();
+            this.mapEvents();
         }
         // add initMap to global env
         window.initMap = initMap;
@@ -42,10 +51,6 @@ class MapView extends View {
         // get map code by jsonp
         scriptTag.setAttribute("src", `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap`);
         document.getElementsByTagName('head')[0].appendChild(scriptTag);
-    }
-    
-    events() {
-        // this.getModel().addEventListener('change-all', () => this.render());
     }
 
 }

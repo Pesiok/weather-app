@@ -29,7 +29,7 @@ export const parseCoords = coords => {
 }
 
 export const fetchCityInfo = (value, key) => {
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${value}&key=${key}`;
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${value}&language=en&key=${key}`;
 
     return fetch(url).then(response => response.json());
 }
@@ -53,38 +53,25 @@ export const fetchWeatherInfo = (coords, key) => {
     return jsonp(url).then(response => response.json());
 }
 
-const convertTemp = (data, system) => {
-    if (system === 'metric') {
-        return data - 273.15;
-    } else if (system === 'imperial') {
-        return Math.round(data * 9/5 - 459.67);
-    } else {
-        console.log('Incorrect unit system');
-        return data;
-    }
+export const convertTemp = (data, system) => {
+    if (system === 'metric') return data - 273.15;
+    if (system === 'imperial') return Math.round(data * 9/5 - 459.67);
 }
 
-const convertSpeed = (data, system) => {
-    if (system === 'metric') {
-        return data;
-    } else if (system === 'imperial') {
-        return Math.round(data * 2.23693629);
-    } else {
-        console.log('Incorrect unit system');
-        return data;
-    }
+export const convertSpeed = (data, system) => {
+    if (system === 'metric') return data;
+    if (system === 'imperial') return Math.round(data * 2.23693629);
 }
 
 export const parseWeatherInfo = (data, system) => {
-    console.log(data, system);
     return {
         country: data.sys.country,
         time: new Date(data.dt * 1000),
         city: data.name,
-        temp: convertTemp(data.main.temp, system),
+        temp: data.main.temp,
         pressure: data.main.pressure,
         humidity: data.main.humidity,
-        wind: convertSpeed(data.wind.speed, system),
+        wind: data.wind.speed,
         sunrise: new Date(data.sys.sunrise * 1000),
         sunset: new Date(data.sys.sunset * 1000),
         description: {

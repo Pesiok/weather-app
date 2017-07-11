@@ -1,4 +1,5 @@
 import {View} from '../utilities/MVC.js';
+import {convertTemp, convertSpeed} from '../utilities/utilis.js';
 
 'use strict';
 
@@ -20,8 +21,6 @@ class WeatherView extends View {
         }
 
         this.events();
-        this.setCheckboxState();
-
     }
 
     getEl() {
@@ -31,7 +30,10 @@ class WeatherView extends View {
     events() {
         this.getModel().addEventListener('change-all', () => this.render());
         this.getModel().addEventListener('change-weather', () => this.render());
-        this.getModel().addEventListener('load', () => this.getController().onLoad());
+        this.getModel().addEventListener('load', () => {
+            this.getController().onLoad();
+            this.setCheckboxState();
+        });
         this.getEl().refresh.addEventListener('click', () => this.getController().onRefresh());
         this.getEl().change.addEventListener('change', () => {
             const checkboxState = this.toggleCheckbox();
@@ -44,10 +46,10 @@ class WeatherView extends View {
         const checkbox = this.getEl().changeCheckbox;
         const indicator = this.getEl().changeIndicator;
 
-        if (model.getSettings().system !== 'metric') {
+        if (model.getSettings().system === 'imperial') {
             checkbox.checked = false;
             indicator.textContent = 'check_box_outline_blank';
-        }
+        } 
     }
 
     toggleCheckbox() {
@@ -64,16 +66,17 @@ class WeatherView extends View {
     }
 
     render() {
-        const location = this.getModel().get('location');
+        const system = this.getModel().getSettings().system;
         const weather = this.getModel().get('weather');
+        const info = this.getModel().get('info');
         
         this.getEl().placeAndTime.innerHTML = `
-            <h2>${location.address}</h2>
+            <h2>${info.title}</h2>
             <p>Weather on: ${weather.time}</p>`;
 
         this.getEl().weather.innerHTML = `
             <img src="${weather.description.icon}" alt="" aria-hidden="true">
-            <span>${weather.temp}</span>
+            <span>${convertTemp(weather.temp, system)}</span>
             <span>${weather.description.info}</span>`;
 
         this.getEl().details.innerHTML = `
@@ -92,7 +95,7 @@ class WeatherView extends View {
                     <td>${weather.sunset}</td>
                     <td>${weather.pressure}</td>
                     <td>${weather.humidity}</td>
-                    <td>${weather.wind}</td>
+                    <td>${convertSpeed(weather.wind, system)}</td>
                 </tr>
             </tbody>`;
     }
