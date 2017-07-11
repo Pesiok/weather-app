@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 7);
+/******/ 	return __webpack_require__(__webpack_require__.s = 8);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -209,11 +209,11 @@ var View = exports.View = function () {
 
 
 var Controller = exports.Controller = function () {
-    function Controller(model) {
+    function Controller(model, view) {
         _classCallCheck(this, Controller);
 
         this._model = model;
-        this._view;
+        this._view = view;
     }
 
     _createClass(Controller, [{
@@ -267,29 +267,26 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var SearchFormController = function (_Controller) {
     _inherits(SearchFormController, _Controller);
 
-    function SearchFormController(model) {
+    function SearchFormController(model, view) {
         _classCallCheck(this, SearchFormController);
 
-        return _possibleConstructorReturn(this, (SearchFormController.__proto__ || Object.getPrototypeOf(SearchFormController)).call(this, model));
+        return _possibleConstructorReturn(this, (SearchFormController.__proto__ || Object.getPrototypeOf(SearchFormController)).call(this, model, view));
     }
 
     _createClass(SearchFormController, [{
-        key: 'onSubmit',
-        value: function onSubmit(event) {
-            var value = event.target.children.searchCity.value;
-
-            event.preventDefault();
-
+        key: '_getAllInfoFromValue',
+        value: function _getAllInfoFromValue(value) {
             var model = this.getModel();
 
             model.getCityInfo(value).then(function (location) {
-                return model.set('location', location);
+                model.set('location', location);
+                model.set('coords', location.coords);
             }).then(function () {
                 return model.getWeatherInfo();
             }).then(function (weather) {
                 return model.set('weather', weather);
             }).then(function () {
-                return model.getWikiInfo();
+                return model.getWikiInfo(model.get('location').name);
             }).then(function (info) {
                 return model.set('info', info);
             }).then(function () {
@@ -297,6 +294,13 @@ var SearchFormController = function (_Controller) {
             }).catch(function (error) {
                 return console.log(error);
             });
+        }
+    }, {
+        key: 'onSubmit',
+        value: function onSubmit(event) {
+            var value = event.target.children.searchCity.value;
+            event.preventDefault();
+            this._getAllInfoFromValue(value);
         }
     }]);
 
@@ -318,9 +322,103 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _utilis = __webpack_require__(9);
+var _MVC = __webpack_require__(0);
 
-var _config = __webpack_require__(6);
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+'use strict';
+
+var WeatherController = function (_Controller) {
+    _inherits(WeatherController, _Controller);
+
+    function WeatherController(model, view) {
+        _classCallCheck(this, WeatherController);
+
+        return _possibleConstructorReturn(this, (WeatherController.__proto__ || Object.getPrototypeOf(WeatherController)).call(this, model, view));
+    }
+
+    _createClass(WeatherController, [{
+        key: '_getAllInfo',
+        value: function _getAllInfo() {
+            var model = this.getModel();
+
+            model.getCoords().then(function (coords) {
+                return model.set('coords', coords);
+            }).then(function () {
+                return model.getWeatherInfo(model.get('coords'));
+            }).then(function (weather) {
+                return model.set('weather', weather);
+            }).then(function () {
+                return model.getCityInfo(model.get('weather').city);
+            }).then(function (location) {
+                return model.set('location', location);
+            }).then(function () {
+                return model.getWikiInfo(model.get('location').name);
+            }).then(function (info) {
+                return model.set('info', info);
+            }).then(function () {
+                return model.emitEvent('change-all');
+            }).catch(function (error) {
+                return console.log(error);
+            });
+        }
+    }, {
+        key: 'onChange',
+        value: function onChange(checkBoxState) {
+            var model = this.getModel();
+            var system = void 0;
+
+            if (checkBoxState) {
+                system = 'metric';
+            } else {
+                system = 'imperial';
+            }
+
+            model.changeSystem(system).then(function (parsedWeatherInfo) {
+                return model.set('weather', parsedWeatherInfo);
+            }).then(function () {
+                return model.emitEvent('change-weather');
+            }).catch(function (error) {
+                return console.log(error);
+            });
+        }
+    }, {
+        key: 'onLoad',
+        value: function onLoad() {
+            this._getAllInfo();
+        }
+    }, {
+        key: 'onRefresh',
+        value: function onRefresh() {
+            this._getAllInfo();
+        }
+    }]);
+
+    return WeatherController;
+}(_MVC.Controller);
+
+exports.default = WeatherController;
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _utilis = __webpack_require__(10);
+
+var _config = __webpack_require__(7);
 
 var _config2 = _interopRequireDefault(_config);
 
@@ -346,17 +444,31 @@ var AppModel = function (_Model) {
 
         _this._settings = _config2.default;
         _this.set('location', {});
-        _this.set('weather', []);
+        _this.set('coords', []);
+        _this.set('weather', {});
         _this.set('info', {});
         return _this;
     }
 
     _createClass(AppModel, [{
+        key: 'init',
+        value: function init() {
+            // decide on unit system
+            if (localStorage.getItem('app-system')) {
+                var system = localStorage.getItem('app-system');
+                this._settings.system = system;
+            } else {
+                var defaultSystem = 'metric';
+                localStorage.setItem('app-system', defaultSystem);
+                this._settings.system = defaultSystem;
+            }
+
+            this.emitEvent('load');
+        }
+    }, {
         key: 'getCoords',
         value: function getCoords() {
-            return (0, _utilis.fetchCoords)().then(function (coords) {
-                return (0, _utilis.parseCoords)(coords);
-            });
+            return (0, _utilis.fetchCoords)();
         }
     }, {
         key: 'getSettings',
@@ -374,17 +486,32 @@ var AppModel = function (_Model) {
             var coords = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.get('location').coords;
 
             var weatherKey = this.getSettings().weatherKey;
+            var system = this.getSettings().system;
 
-            return (0, _utilis.parseCoords)(coords).then(function (coords) {
-                return (0, _utilis.fetchWeatherInfo)(coords, weatherKey);
-            }).then(_utilis.parseWeatherInfo);
+            return (0, _utilis.parseCoords)(coords).then(function (parsedCoords) {
+                return (0, _utilis.fetchWeatherInfo)(parsedCoords, weatherKey);
+            }).then(function (weatherInfo) {
+                return (0, _utilis.parseWeatherInfo)(weatherInfo, system);
+            });
         }
     }, {
         key: 'getWikiInfo',
-        value: function getWikiInfo() {
-            var city = this.get('weather').city || this.get('location').address;
-
+        value: function getWikiInfo(city) {
             return (0, _utilis.fetchWikiInfo)(city).then(_utilis.parseWikiInfo);
+        }
+    }, {
+        key: 'changeSystem',
+        value: function changeSystem(system) {
+            var weatherInfo = this.get('weather');
+            var weatherKey = this.getSettings().weatherKey;
+            var coords = this.get('coords');
+
+            this._settings.system = system;
+            localStorage.setItem('app-system', system);
+
+            return (0, _utilis.fetchWeatherInfo)(coords, weatherKey).then(function (weatherInfo) {
+                return (0, _utilis.parseWeatherInfo)(weatherInfo, system);
+            });
         }
     }]);
 
@@ -394,7 +521,7 @@ var AppModel = function (_Model) {
 exports.default = AppModel;
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -453,7 +580,7 @@ var InfoView = function (_View) {
 exports.default = InfoView;
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -505,7 +632,7 @@ var SearchFormView = function (_View) {
 exports.default = SearchFormView;
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -544,10 +671,16 @@ var WeatherView = function (_View) {
         _this._elements = {
             placeAndTime: containers[0],
             weather: containers[1],
-            details: _this.getRoot().querySelector('.weather-info__details')
+            details: _this.getRoot().querySelector('.weather-info__details'),
+            refresh: _this.getRoot().querySelector('.weather-info__refresh'),
+            change: _this.getRoot().querySelector('.weather-info__switch'),
+            changeCheckbox: _this.getRoot().querySelector('.weather-info__switch-checkbox'),
+            changeIndicator: _this.getRoot().querySelector('.weather-info__switch-indicator')
         };
 
         _this.events();
+        _this.setCheckboxState();
+
         return _this;
     }
 
@@ -564,6 +697,45 @@ var WeatherView = function (_View) {
             this.getModel().addEventListener('change-all', function () {
                 return _this2.render();
             });
+            this.getModel().addEventListener('change-weather', function () {
+                return _this2.render();
+            });
+            this.getModel().addEventListener('load', function () {
+                return _this2.getController().onLoad();
+            });
+            this.getEl().refresh.addEventListener('click', function () {
+                return _this2.getController().onRefresh();
+            });
+            this.getEl().change.addEventListener('change', function () {
+                var checkboxState = _this2.toggleCheckbox();
+                _this2.getController().onChange(checkboxState);
+            });
+        }
+    }, {
+        key: 'setCheckboxState',
+        value: function setCheckboxState() {
+            var model = this.getModel();
+            var checkbox = this.getEl().changeCheckbox;
+            var indicator = this.getEl().changeIndicator;
+
+            if (model.getSettings().system !== 'metric') {
+                checkbox.checked = false;
+                indicator.textContent = 'check_box_outline_blank';
+            }
+        }
+    }, {
+        key: 'toggleCheckbox',
+        value: function toggleCheckbox() {
+            var indicator = this.getEl().changeIndicator;
+            var checkbox = this.getEl().changeCheckbox;
+
+            if (checkbox.checked) {
+                indicator.textContent = 'check_box';
+            } else {
+                indicator.textContent = 'check_box_outline_blank';
+            }
+
+            return checkbox.checked;
         }
     }, {
         key: 'render',
@@ -585,34 +757,35 @@ var WeatherView = function (_View) {
 exports.default = WeatherView;
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports) {
 
 module.exports = {
 	"geocodeKey": "AIzaSyCzS_VaGlP12Ddwn9hQIWW3qi_vcc2PWdc",
-	"weatherKey": "ecade6d2f60bfbb23bf403c610064563"
+	"weatherKey": "ecade6d2f60bfbb23bf403c610064563",
+	"mapKey": "AIzaSyCAoZKb18BDrDlKTiNGe_K6NsfRXxE1IqE"
 };
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _appModel = __webpack_require__(2);
+var _appModel = __webpack_require__(3);
 
 var _appModel2 = _interopRequireDefault(_appModel);
 
-var _SearchFormView = __webpack_require__(4);
+var _SearchFormView = __webpack_require__(5);
 
 var _SearchFormView2 = _interopRequireDefault(_SearchFormView);
 
-var _WeatherView = __webpack_require__(5);
+var _WeatherView = __webpack_require__(6);
 
 var _WeatherView2 = _interopRequireDefault(_WeatherView);
 
-var _InfoView = __webpack_require__(3);
+var _InfoView = __webpack_require__(4);
 
 var _InfoView2 = _interopRequireDefault(_InfoView);
 
@@ -620,37 +793,38 @@ var _SearchFormController = __webpack_require__(1);
 
 var _SearchFormController2 = _interopRequireDefault(_SearchFormController);
 
+var _WeatherController = __webpack_require__(2);
+
+var _WeatherController2 = _interopRequireDefault(_WeatherController);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// import MapController from './controllers/MapController';
+
+// import MapView from './views/MapView'; 
 'use strict';
 
-// main model
+// app model
 var appModel = new _appModel2.default();
 
 // controllers
 var searchFormController = new _SearchFormController2.default(appModel);
+var weatherController = new _WeatherController2.default(appModel);
+// const mapController = new mapController(appModel);
 
 // views
 var searchFormView = new _SearchFormView2.default(appModel, searchFormController);
-var weatherView = new _WeatherView2.default(appModel);
+var weatherView = new _WeatherView2.default(appModel, weatherController);
 var infoView = new _InfoView2.default(appModel);
+// const mapView = new mapView(appModel);
 
-// start app on load
-
-// document.addEventListener('DOMContentLoaded', () => {
-//     appModel.getCoords()
-//         .then(() => appModel.getWeatherInfo())
-//         .then(weather => appModel.set('weater', weather))
-//         .then(() => getCityInfo(appModel.get('weather').city))
-//         .then(location => appModel.set('location', location))
-//         .then(() => appModel.getWikiInfo())
-//         .then(info => appModel.set('info', info))
-//         .then(() => appModel.emitEvent('change-all'))
-//         .catch(error => console.log(error));
-// });
+// initialize app
+document.addEventListener('DOMContentLoaded', function () {
+  return appModel.init();
+});
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -718,7 +892,7 @@ var jsonp = function jsonp(_url) {
 exports.default = jsonp;
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -731,7 +905,7 @@ exports.parseWikiInfo = exports.fetchWikiInfo = exports.parseWeatherInfo = expor
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-var _jsonp = __webpack_require__(8);
+var _jsonp = __webpack_require__(9);
 
 var _jsonp2 = _interopRequireDefault(_jsonp);
 
@@ -777,10 +951,11 @@ var parseCityInfo = exports.parseCityInfo = function parseCityInfo(data) {
     if (!data.status === 'OK') {
         throw new Error('Incorrect data status');
     }
-
+    var info = data.results[0];
     return {
-        address: data.results[0].formatted_address,
-        coords: [data.results[0].geometry.location.lat, data.results[0].geometry.location.lng]
+        name: info.address_components[0].short_name,
+        address: info.formatted_address,
+        coords: [info.geometry.location.lat, info.geometry.location.lng]
     };
 };
 
@@ -796,15 +971,38 @@ var fetchWeatherInfo = exports.fetchWeatherInfo = function fetchWeatherInfo(coor
     });
 };
 
-var parseWeatherInfo = exports.parseWeatherInfo = function parseWeatherInfo(data) {
+var convertTemp = function convertTemp(data, system) {
+    if (system === 'metric') {
+        return data - 273.15;
+    } else if (system === 'imperial') {
+        return Math.round(data * 9 / 5 - 459.67);
+    } else {
+        console.log('Incorrect unit system');
+        return data;
+    }
+};
+
+var convertSpeed = function convertSpeed(data, system) {
+    if (system === 'metric') {
+        return data;
+    } else if (system === 'imperial') {
+        return Math.round(data * 2.23693629);
+    } else {
+        console.log('Incorrect unit system');
+        return data;
+    }
+};
+
+var parseWeatherInfo = exports.parseWeatherInfo = function parseWeatherInfo(data, system) {
+    console.log(data, system);
     return {
         country: data.sys.country,
         time: new Date(data.dt * 1000),
         city: data.name,
-        temp: data.main.temp,
+        temp: convertTemp(data.main.temp, system),
         pressure: data.main.pressure,
         humidity: data.main.humidity,
-        wind: data.wind.speed,
+        wind: convertSpeed(data.wind.speed, system),
         sunrise: new Date(data.sys.sunrise * 1000),
         sunset: new Date(data.sys.sunset * 1000),
         description: {
@@ -824,7 +1022,6 @@ var fetchWikiInfo = exports.fetchWikiInfo = function fetchWikiInfo(value) {
 
 var parseWikiInfo = exports.parseWikiInfo = function parseWikiInfo(data) {
     var info = Object.values(data.query.pages)[0];
-    // console.log(data);
     return {
         title: info.title,
         link: 'http://en.wikipedia.org/?curid=' + info.pageid,

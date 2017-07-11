@@ -22,7 +22,6 @@ class InfoView extends View {
             <a class="button" href="${info.link}">Learn more</a>
         `
     }
-
 }
 
 export default InfoView;

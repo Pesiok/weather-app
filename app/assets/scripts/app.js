@@ -1,35 +1,31 @@
 import AppModel from './models/appModel'; 
 import SearchFormView from './views/SearchFormView'; 
 import WeatherView from './views/WeatherView'; 
-import InfoView from './views/InfoView'; 
+import InfoView from './views/InfoView';
+// import MapView from './views/MapView'; 
 import SearchFormController from './controllers/SearchFormController';
+import WeatherController from './controllers/WeatherController';
+// import MapController from './controllers/MapController';
 
 'use strict'; 
 
-// main model
+// app model
 const appModel = new AppModel();
 
 // controllers
-const searchFormController = new SearchFormController(appModel)
+const searchFormController = new SearchFormController(appModel);
+const weatherController = new WeatherController(appModel);
+// const mapController = new mapController(appModel);
 
 // views
 const searchFormView = new SearchFormView(appModel, searchFormController);
-const weatherView = new WeatherView(appModel);
+const weatherView = new WeatherView(appModel, weatherController);
 const infoView = new InfoView(appModel);
+// const mapView = new mapView(appModel);
 
-// start app on load
+// initialize app
+document.addEventListener('DOMContentLoaded', () => appModel.init());
 
-// document.addEventListener('DOMContentLoaded', () => {
-//     appModel.getCoords()
-//         .then(() => appModel.getWeatherInfo())
-//         .then(weather => appModel.set('weater', weather))
-//         .then(() => getCityInfo(appModel.get('weather').city))
-//         .then(location => appModel.set('location', location))
-//         .then(() => appModel.getWikiInfo())
-//         .then(info => appModel.set('info', info))
-//         .then(() => appModel.emitEvent('change-all'))
-//         .catch(error => console.log(error));
-// });
 
 
 

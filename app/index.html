@@ -18,7 +18,7 @@
         </div>
         <form class="form" id="searchForm">
             <label class="form__label" for="searchCity">Find city</label>
-            <input class="form__input" id="searchCity" type="search" placeholder="Find city"></input>
+            <input class="form__input" id="searchCity" type="search" placeholder="Find city">
             <button class="form__button" type="submit">
                 <span class="form__icon material-icons">search</span>
             </button>
@@ -60,8 +60,15 @@
                     </tbody>
                 </table>
                 <div>
-                    <button>Change scale</button>
-                    <button>Refresh</button>
+                    <!--<button class="">
+                        Change scale
+                    </button>-->
+                    <button class="weather-info__refresh">Refresh</button>
+                    <label class="weather-info__switch">
+                        <input class="weather-info__switch-checkbox" type="checkbox" checked>
+                        <span class="weather-info__switch-indicator material-icons" aria-hidden="true">check_box</span>
+                        Use metric system.
+                    </label>
                 </div>
             </article>
             <article class="content-container city-info">

@@ -12,10 +12,16 @@ class WeatherView extends View {
         this._elements = {
             placeAndTime: containers[0],
             weather: containers[1],
-            details: this.getRoot().querySelector('.weather-info__details')
+            details: this.getRoot().querySelector('.weather-info__details'),
+            refresh: this.getRoot().querySelector('.weather-info__refresh'),
+            change: this.getRoot().querySelector('.weather-info__switch'),
+            changeCheckbox: this.getRoot().querySelector('.weather-info__switch-checkbox'),
+            changeIndicator: this.getRoot().querySelector('.weather-info__switch-indicator')
         }
 
         this.events();
+        this.setCheckboxState();
+
     }
 
     getEl() {
@@ -24,6 +30,37 @@ class WeatherView extends View {
 
     events() {
         this.getModel().addEventListener('change-all', () => this.render());
+        this.getModel().addEventListener('change-weather', () => this.render());
+        this.getModel().addEventListener('load', () => this.getController().onLoad());
+        this.getEl().refresh.addEventListener('click', () => this.getController().onRefresh());
+        this.getEl().change.addEventListener('change', () => {
+            const checkboxState = this.toggleCheckbox();
+            this.getController().onChange(checkboxState);
+        });
+    }
+
+    setCheckboxState() {
+        const model = this.getModel();
+        const checkbox = this.getEl().changeCheckbox;
+        const indicator = this.getEl().changeIndicator;
+
+        if (model.getSettings().system !== 'metric') {
+            checkbox.checked = false;
+            indicator.textContent = 'check_box_outline_blank';
+        }
+    }
+
+    toggleCheckbox() {
+         const indicator = this.getEl().changeIndicator;
+         const checkbox = this.getEl().changeCheckbox;
+
+         if (checkbox.checked) {
+             indicator.textContent = 'check_box';
+         } else {
+            indicator.textContent = 'check_box_outline_blank';
+         }
+
+         return checkbox.checked;
     }
 
     render() {

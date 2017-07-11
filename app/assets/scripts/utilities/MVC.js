@@ -86,9 +86,9 @@ export class View {
 
 // can get another view or model to work with
 export class Controller {
-    constructor(model) {
+    constructor(model, view) {
         this._model = model;
-        this._view;
+        this._view = view;
     }
 
     getView() {

@@ -18,13 +18,27 @@ class AppModel extends Model {
         super();
         this._settings = config;
         this.set('location', {});
-        this.set('weather', []);
+        this.set('coords', []);
+        this.set('weather', {});
         this.set('info', {});
     }
 
+    init() {
+        // decide on unit system
+        if (localStorage.getItem('app-system')) {
+            const system = localStorage.getItem('app-system');
+            this._settings.system = system;
+        } else {
+            const defaultSystem = 'metric';
+            localStorage.setItem('app-system', defaultSystem);
+            this._settings.system = defaultSystem;
+        }
+
+        this.emitEvent('load');
+    }
+
     getCoords() {
-        return fetchCoords()
-            .then(coords => parseCoords(coords));
+        return fetchCoords();
     }
 
     getSettings() {
@@ -37,20 +51,30 @@ class AppModel extends Model {
 
     getWeatherInfo(coords = this.get('location').coords) {
         const weatherKey = this.getSettings().weatherKey;
+        const system = this.getSettings().system;
         
         return parseCoords(coords)
-            .then(coords => fetchWeatherInfo(coords, weatherKey))
-            .then(parseWeatherInfo);
+            .then(parsedCoords => fetchWeatherInfo(parsedCoords, weatherKey))
+            .then(weatherInfo => parseWeatherInfo(weatherInfo, system));
         
     }
 
-    getWikiInfo() {
-        const city = this.get('weather').city || this.get('location').address;
-
+    getWikiInfo(city) {
         return fetchWikiInfo(city).then(parseWikiInfo);
     }
 
-    
+    changeSystem(system) {
+        const weatherInfo = this.get('weather');
+        const weatherKey = this.getSettings().weatherKey;
+        const coords = this.get('coords');
+
+        this._settings.system = system;
+        localStorage.setItem('app-system', system);
+
+        return fetchWeatherInfo(coords, weatherKey)
+            .then(weatherInfo => parseWeatherInfo(weatherInfo, system));
+    }
+
 }
 
 export default AppModel;

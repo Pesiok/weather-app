@@ -38,10 +38,11 @@ export const parseCityInfo = data => {
     if (!data.status === 'OK') {
         throw new Error('Incorrect data status');
     } 
-
+    const info = data.results[0];
     return {
-        address: data.results[0].formatted_address,
-        coords: [data.results[0].geometry.location.lat, data.results[0].geometry.location.lng]
+        name: info.address_components[0].short_name,
+        address: info.formatted_address,
+        coords: [info.geometry.location.lat, info.geometry.location.lng]
     }
 }
 
@@ -52,15 +53,38 @@ export const fetchWeatherInfo = (coords, key) => {
     return jsonp(url).then(response => response.json());
 }
 
-export const parseWeatherInfo = data => {
+const convertTemp = (data, system) => {
+    if (system === 'metric') {
+        return data - 273.15;
+    } else if (system === 'imperial') {
+        return Math.round(data * 9/5 - 459.67);
+    } else {
+        console.log('Incorrect unit system');
+        return data;
+    }
+}
+
+const convertSpeed = (data, system) => {
+    if (system === 'metric') {
+        return data;
+    } else if (system === 'imperial') {
+        return Math.round(data * 2.23693629);
+    } else {
+        console.log('Incorrect unit system');
+        return data;
+    }
+}
+
+export const parseWeatherInfo = (data, system) => {
+    console.log(data, system);
     return {
         country: data.sys.country,
         time: new Date(data.dt * 1000),
         city: data.name,
-        temp: data.main.temp,
+        temp: convertTemp(data.main.temp, system),
         pressure: data.main.pressure,
         humidity: data.main.humidity,
-        wind: data.wind.speed,
+        wind: convertSpeed(data.wind.speed, system),
         sunrise: new Date(data.sys.sunrise * 1000),
         sunset: new Date(data.sys.sunset * 1000),
         description: {
@@ -78,7 +102,6 @@ export const fetchWikiInfo = value => {
 
 export const parseWikiInfo = data => {
     const info = Object.values(data.query.pages)[0];
-    // console.log(data);
     return {
         title: info.title,
         link: `http://en.wikipedia.org/?curid=${info.pageid}`,
