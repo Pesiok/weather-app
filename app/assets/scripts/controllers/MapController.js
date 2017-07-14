@@ -9,12 +9,22 @@ class MapController extends Controller {
 
     _getAllInfo() {
         const model = this.getModel();
+        let weatherCity;
+        let locationCity;
+
+        console.log(model.get('coords'));
 
         model.getWeatherInfo(model.get('coords'))
-            .then(weather => model.set('weather', weather))
-            .then(() => model.getCityInfo(model.get('weather').city))
-            .then(location => model.set('location', location))
-            .then(() => model.getWikiInfo(model.get('location').name))
+            .then(weather => {
+                model.set('weather', weather);
+                weatherCity = weather.city;
+            })
+            .then(() => model.getCityInfo(weatherCity))
+            .then(location => {
+                model.set('location', location);
+                locationCity = location.name;
+            })
+            .then(() => model.getWikiInfo(weatherCity))
             .then(info => model.set('info', info))
             .then(() => model.emitEvent('change-all'))
             .catch(error => console.log(error));
@@ -22,23 +32,24 @@ class MapController extends Controller {
 
     onCoordsChange() {
         const map = this.getModel().get('map');
-        const coords = this.getModel().get('coords')
-        const latLng = new google.maps.LatLng(coords[0], coords[1]);
+        const [lat, lng] = this.getModel().get('coords')
+        const latLng = new google.maps.LatLng(lat, lng);
 
         map.marker.setPosition(latLng);
         map.map.setCenter(latLng);
+
+        this._getAllInfo();
     }
 
     onDbClick(event) {
         const model = this.getModel();
-        const coords = [];
-        coords[0] = event.latLng.lat();
-        coords[1] = event.latLng.lng();
-
+        const coords = [event.latLng.lat(), event.latLng.lng()];
+   
         model.set('coords', coords);
+         console.log(model.get('coords'));
         model.emitEvent('change-coords');
 
-        this._getAllInfo();
+        
     }
 
 }

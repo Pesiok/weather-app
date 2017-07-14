@@ -9,10 +9,12 @@ class SearchFormController extends Controller {
 
     _getAllInfoFromValue(value) {
         const model =  this.getModel()
+        let cityLocation;
 
         model.getCityInfo(value)
             .then(location => {
                 model.set('location', location);
+                cityLocation = location.name
 
                 if (model.get('coords')) {
                     model.set('coords', location.coords);
@@ -24,9 +26,14 @@ class SearchFormController extends Controller {
             })
             .then(() => model.getWeatherInfo())
             .then(weather => model.set('weather', weather))
-            .then(() => model.getWikiInfo(value))
+            .then(() => model.getWikiInfo(cityLocation))
             .then(info => model.set('info', info))
-            .then(() => model.emitEvent('change-all'))  
+            .then(() => {
+                console.log(model.get('weather'));
+                console.log(model.get('info'));
+                console.log(model.get('location'));
+                model.emitEvent('change-all');
+            })  
             .catch(error => console.log(error));
     }
 

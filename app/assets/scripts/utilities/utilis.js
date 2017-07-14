@@ -2,6 +2,14 @@ import jsonp from './jsonp.js';
 
 'use strict';
 
+ // returns nonASCII string or first one
+export const getNonASCII = (a, b) => {
+    const regExp = /[^\x00-\x7F]+/;
+    const nonASCII = (b.match(regExp)) ? b : a;
+
+    return nonASCII;
+}
+
 export const fetchCoords = () => {
     return new Promise((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(position => {
@@ -54,26 +62,34 @@ export const fetchWeatherInfo = (coords, key) => {
 }
 
 export const convertTemp = (data, system) => {
-    if (system === 'metric') return data - 273.15;
-    if (system === 'imperial') return Math.round(data * 9/5 - 459.67);
+    if (system === 'metric') return `${Math.round(data - 273.15)} &#8451;`;
+    if (system === 'imperial') return `${Math.round(data * 9/5 - 459.67)} &#8457;`;
 }
 
 export const convertSpeed = (data, system) => {
-    if (system === 'metric') return data;
-    if (system === 'imperial') return Math.round(data * 2.23693629);
+    if (system === 'metric') return `${Math.round(data)} m/s`
+    if (system === 'imperial') return `${Math.round(data * 2.23693629)} mph`;
+}
+
+const parseTime = isoString => {
+    return new Date(isoString * 1000).toLocaleTimeString().substring(0, 5)
+}
+
+const parseDate = isoString => {
+    return new Date(isoString * 1000).toDateString().substr(4, 3);
 }
 
 export const parseWeatherInfo = (data, system) => {
     return {
         country: data.sys.country,
-        time: new Date(data.dt * 1000),
+        time: `${parseDate(data.dt)}, ${parseTime(data.dt)}`,
         city: data.name,
         temp: data.main.temp,
-        pressure: data.main.pressure,
-        humidity: data.main.humidity,
+        pressure: `${Math.round(data.main.pressure)} hPa`,
+        humidity: `${data.main.humidity} %`,
         wind: data.wind.speed,
-        sunrise: new Date(data.sys.sunrise * 1000),
-        sunset: new Date(data.sys.sunset * 1000),
+        sunrise: parseTime(data.sys.sunrise),
+        sunset: parseTime(data.sys.sunset),
         description: {
             info: data.weather[0].description,
             icon: `http://openweathermap.org/img/w/${data.weather[0].icon}.png`
@@ -82,7 +98,7 @@ export const parseWeatherInfo = (data, system) => {
 }
 
 export const fetchWikiInfo = value => {
-    const url = `https://en.wikipedia.org/w/api.php?action=query&prop=extracts&format=json&exintro=&titles=${value}`;
+    const url = `https://en.wikipedia.org/w/api.php?action=query&prop=extracts&format=json&exintro=&titles=${value}&redirects`;
 
     return jsonp(url).then(response => response.json());
 }

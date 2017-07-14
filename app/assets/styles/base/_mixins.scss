@@ -19,6 +19,16 @@
     white-space: nowrap;
 }
 
+@mixin container() {
+    width: 70rem;
+    
+    margin-bottom: 2rem;
+
+    background-color: $primaryLight;
+
+    font-size: 1.5rem;
+}
+
 //media queries
 @mixin atSmall() {
     @media (min-width: 576px) {

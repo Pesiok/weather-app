@@ -1,0 +1,16 @@
+.main {
+   height: 100%;
+
+   &__section {
+        position: absolute;
+
+        top: 10rem;
+        right: 5rem;
+        z-index: 10;
+   }
+
+   &__title {
+       @include visuallyHidden();
+   }
+
+}

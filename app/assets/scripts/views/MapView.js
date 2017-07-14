@@ -1,5 +1,5 @@
 import {View} from '../utilities/MVC.js'; 
-// import {Map, Marker} from '../utilities/Maps.js';
+import mapStyle from '../config/mapStyle.json';
 
 'use strict';
 
@@ -9,6 +9,7 @@ class MapView extends View {
         this.setRoot(document.getElementById('map'));
 
         this.events();
+        console.log(mapStyle);
     }
 
     events() {
@@ -32,7 +33,8 @@ class MapView extends View {
                     lat: coords[0], 
                     lng: coords[1]
                 },
-                zoom: 8
+                zoom: 6,
+                styles: mapStyle
             });
             const marker = new google.maps.Marker({
                 position:{

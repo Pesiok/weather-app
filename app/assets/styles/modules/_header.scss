@@ -1,22 +1,33 @@
 .header {
+    position: absolute;
+    top: 0;
+    z-index: 10;
     display: flex;
     align-items: center;
     justify-content: space-around;
 
-    height: 7rem;
+    height: 6rem;
+    width: 100%;
 
     background-color: $primaryLight;
+    @include mdShadow(1);
 
     text-align: center;
 
     &__title {
-        margin: 0;
+        text-decoration: none;
+        color: $secondaryDark;
+        font-size: 2rem;
 
-        font-size: 3rem;
+        h1 {
+             margin: 0;    
+            
+        }
+        
     }
 
     &__subtitle {
         margin: 0;
-        
+        font-size: 1.3rem;
     }
 }

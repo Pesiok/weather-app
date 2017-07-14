@@ -1,6 +1,8 @@
 html {
     box-sizing: border-box;
 
+    height: 100%;
+
     font-size: 62.5%;
 
     font-family: 'Roboto', sans-serif;
@@ -13,4 +15,5 @@ html {
 
 body {
     background-color: $materialBackground;
+    height: 100%;
 }

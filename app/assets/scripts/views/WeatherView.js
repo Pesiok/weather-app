@@ -1,23 +1,23 @@
 import {View} from '../utilities/MVC.js';
-import {convertTemp, convertSpeed} from '../utilities/utilis.js';
+import {convertTemp, convertSpeed, getNonASCII} from '../utilities/utilis.js';
 
 'use strict';
 
 class WeatherView extends View {
     constructor(model, controller) {
         super(model, controller);
-        this.setRoot(document.querySelector('.weather-info'));
+        this.setRoot(document.getElementById('weather'));
 
-        const containers = [...this.getRoot().querySelectorAll('.weather-info__container')];
+        // const containers = [...this.getRoot().querySelectorAll('.weather-info__container')];
 
         this._elements = {
-            placeAndTime: containers[0],
-            weather: containers[1],
-            details: this.getRoot().querySelector('.weather-info__details'),
-            refresh: this.getRoot().querySelector('.weather-info__refresh'),
-            change: this.getRoot().querySelector('.weather-info__switch'),
-            changeCheckbox: this.getRoot().querySelector('.weather-info__switch-checkbox'),
-            changeIndicator: this.getRoot().querySelector('.weather-info__switch-indicator')
+            timePlace: this.getRoot().querySelector('.weather-timeplace'),
+            description: this.getRoot().querySelector('.weather-description'),
+            details: this.getRoot().querySelector('.weather-details'),
+            refresh: this.getRoot().querySelector('.weather-actions__refresh'),
+            change: this.getRoot().querySelector('.switch'),
+            changeCheckbox: this.getRoot().querySelector('.switch__checkbox'),
+            changeIndicator: this.getRoot().querySelector('.switch__indicator')
         }
 
         this.events();
@@ -70,17 +70,21 @@ class WeatherView extends View {
         const weather = this.getModel().get('weather');
         const info = this.getModel().get('info');
         
-        this.getEl().placeAndTime.innerHTML = `
-            <h2>${info.title}</h2>
-            <p>Weather on: ${weather.time}</p>`;
+        this.getEl().timePlace.innerHTML = `
+            <h2 class="weather-timeplace__title">${getNonASCII(weather.city, info.title)}</h2>
+            <strong class="weather-timeplace__date">Weather on: <time>${weather.time}</time></strong>`;
 
-        this.getEl().weather.innerHTML = `
-            <img src="${weather.description.icon}" alt="" aria-hidden="true">
-            <span>${convertTemp(weather.temp, system)}</span>
-            <span>${weather.description.info}</span>`;
+        this.getEl().description.innerHTML = `
+            <div class="weather-description__container">
+                <img class="weathier-description__icon" src="${weather.description.icon}" alt="" aria-hidden="true">
+                <strong class="weather-description__temp">${convertTemp(weather.temp, system)}</strong>
+            </div>
+            <strong class="weather-description__desc">${weather.description.info}</strong>
+            `;
+           
 
         this.getEl().details.innerHTML = `
-            <thead>
+            <thead class="weather-details__thead">
                 <tr>
                     <th>Sunrise</th>
                     <th>Sunset</th>
@@ -89,7 +93,7 @@ class WeatherView extends View {
                     <th>Wind</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="weather-details__tbody">
                 <tr>
                     <td>${weather.sunrise}</td>
                     <td>${weather.sunset}</td>

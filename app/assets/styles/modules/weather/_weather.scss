@@ -1,0 +1,16 @@
+.weather {
+    @include container();
+    @include mdShadow(3);
+
+    &__wrapper {
+        display: flex;
+        height: 9rem;
+        padding: 1rem;
+        align-items: center;
+        justify-content: space-between;
+
+        border-bottom: 0.2rem solid $primary;
+        
+
+    }
+}

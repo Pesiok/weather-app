@@ -1,0 +1,28 @@
+.weather-description {
+   padding-left: 1rem;
+
+    &__container {
+        display: flex;
+        align-items: center;
+    }
+
+    &__icon {
+        display: block;
+    }
+
+    &__temp {
+        display: block;
+        margin-left: 0.5rem;
+        font-size: 3rem;
+    }
+
+    &__desc {
+        display: block;
+        font-weight: normal;
+        text-align: center;
+
+        font-size: 1.8rem;
+    }
+
+
+}

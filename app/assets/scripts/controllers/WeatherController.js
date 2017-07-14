@@ -1,4 +1,5 @@
 import {Controller} from '../utilities/MVC.js';
+import {getNonASCII} from '../utilities/utilis.js';
 
 'use strict';
 
@@ -9,6 +10,8 @@ class WeatherController extends Controller {
 
     _getAllInfo() {
         const model = this.getModel();
+        let weatherCity;
+        let locationCity;
 
         model.getCoords()
             .then(coords => {
@@ -21,10 +24,16 @@ class WeatherController extends Controller {
                 }
             })
             .then(() => model.getWeatherInfo(model.get('coords')))
-            .then(weather => model.set('weather', weather))
-            .then(() => model.getCityInfo(model.get('weather').city))
-            .then(location => model.set('location', location))
-            .then(() => model.getWikiInfo(model.get('location').name))
+            .then(weather => {
+                model.set('weather', weather);
+                weatherCity = weather.city;
+            })
+            .then(() => model.getCityInfo(weatherCity))
+            .then(location => {
+                model.set('location', location);
+                locationCity = location.name;
+            })
+            .then(() => model.getWikiInfo(getNonASCII(weatherCity, locationCity)))
             .then(info => model.set('info', info))
             .then(() => model.emitEvent('change-all'))
             .catch(error => console.log(error));

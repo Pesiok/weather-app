@@ -12,10 +12,7 @@
 </head>
 <body>
     <header class="header">
-        <div class="header__content">
-            <h1 class="header__title">Local Weather</h1>
-            <p class="header__subtitle">current weather around the world</p>
-        </div>
+        <a class="header__title" href="#"><h1>Local Weather</h1></a>
         <form class="form" id="searchForm">
             <label class="form__label" for="searchCity">Find city</label>
             <input class="form__input" id="searchCity" type="search" placeholder="Find city">
@@ -24,59 +21,38 @@
             </button>
         </form>
     </header>
-    <main class="main-wrapper">
-        <div class="map">
-            <div id="map" class="map__canvas"></div>
-        </div>
-        <div>
-            <article class="content-container weather-info">
-                <div class="weather-info__container">
-                    <h2>City, Country</h2>
-                    <p>Weather on: June 5, 12:35</p>
+    <main class="main">
+        <!-- <div class="map"> -->
+        <div id="map" class="map__canvas"></div>
+        <!-- </div> -->
+        <section class="main__section">
+            <h2 class="main__title">Information</h2>
+            <article id="weather" class="content-container weather">
+            <div class="weather__wrapper">
+                <header class="weather-timeplace">
+                    <!-- live content -->
+                </header>
+                <div class="weather-description">
+                    <!-- live content -->
                 </div>
-                <div class="weather-info__container">
-                    <span class="icon" aria-hidden="true"></span>
-                    <span>76 F</span>
-                    <span>Mostly cloudy</span>
-                </div>
-                <table class="weather-info__details">
-                    <thead>
-                        <tr>
-                            <th>Sunrise</th>
-                            <th>Sunset</th>
-                            <th>Pressure</th>
-                            <th>Humidity</th>
-                            <th>Wind</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>2</td>
-                            <td>3</td>
-                            <td>4</td>
-                            <td>5</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div>
-                    <!--<button class="">
-                        Change scale
-                    </button>-->
-                    <button class="weather-info__refresh">Refresh</button>
-                    <label class="weather-info__switch">
-                        <input class="weather-info__switch-checkbox" type="checkbox" checked>
-                        <span class="weather-info__switch-indicator material-icons" aria-hidden="true">check_box</span>
-                        Use metric system.
-                    </label>
-                </div>
+            </div>
+            <table class="weather-details">
+                <!-- live content -->
+            </table>
+            <div class="weather-actions">
+                <label class="switch">
+                    <input class="switch__checkbox" type="checkbox" checked>
+                    <span class="switch__indicator material-icons" aria-hidden="true">check_box</span>
+                    Use metric system.
+                </label>
+                <button class="weather-actions__refresh material-icons" title="Refresh to use current location.">refresh</button>
+            </div>
             </article>
-            <article class="content-container city-info">
+            <article id="city" class="city">
+                <!-- live content -->
             </article>
-        </div>
-
+        </section>
     </main>
-    
     <!-- build:js assets/scripts/app.js -->
     <script src="/temp/scripts/app.js"></script>
     <!-- endbuild -->
