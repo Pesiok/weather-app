@@ -13,6 +13,8 @@ class WeatherController extends Controller {
         let weatherCity;
         let locationCity;
 
+        model.emitEvent('get-all');
+
         model.getCoords()
             .then(coords => {
                 if (model.get('coords')) {

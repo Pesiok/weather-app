@@ -3,10 +3,24 @@
 
    &__section {
         position: absolute;
-
         top: 10rem;
-        right: 5rem;
-        z-index: 10;
+
+        width: 100%;
+
+        @include atSmall() {
+            position: absolute;
+            top: 10rem;
+            right: 2rem;
+            z-index: 10;
+
+            width: 50rem;
+        }
+
+        @include atLarge() {
+            top: 12rem;
+            right: 7rem;
+        }
+
    }
 
    &__title {

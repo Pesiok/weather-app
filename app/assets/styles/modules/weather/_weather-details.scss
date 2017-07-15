@@ -8,17 +8,25 @@
     background-color: $primary;
 
     &__thead {
-        font-size: 1.7rem;
-        
+        font-size: 1.3rem;
+
+        @include atSmall() {
+            font-size: 1.7rem;
+        }
 
         th {
            padding: 0.5rem;
            font-weight: normal;
         }
-        
     }
 
     &__tbody {
+        font-size: 1.2rem;
+
+        @include atSmall() {
+            font-size: 1.5rem;
+        }
+
         td {
             padding-bottom: 0.5rem;
         }

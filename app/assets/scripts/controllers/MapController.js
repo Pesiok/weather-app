@@ -12,7 +12,7 @@ class MapController extends Controller {
         let weatherCity;
         let locationCity;
 
-        console.log(model.get('coords'));
+        model.emitEvent('get-all');
 
         model.getWeatherInfo(model.get('coords'))
             .then(weather => {

@@ -423,7 +423,7 @@ var MapController = function (_Controller) {
             var weatherCity = void 0;
             var locationCity = void 0;
 
-            console.log(model.get('coords'));
+            model.emitEvent('get-all');
 
             model.getWeatherInfo(model.get('coords')).then(function (weather) {
                 model.set('weather', weather);
@@ -515,6 +515,8 @@ var SearchFormController = function (_Controller) {
             var model = this.getModel();
             var cityLocation = void 0;
 
+            model.emitEvent('get-all');
+
             model.getCityInfo(value).then(function (location) {
                 model.set('location', location);
                 cityLocation = location.name;
@@ -597,6 +599,8 @@ var WeatherController = function (_Controller) {
             var model = this.getModel();
             var weatherCity = void 0;
             var locationCity = void 0;
+
+            model.emitEvent('get-all');
 
             model.getCoords().then(function (coords) {
                 if (model.get('coords')) {
@@ -795,25 +799,44 @@ var InfoView = function (_View) {
         var _this = _possibleConstructorReturn(this, (InfoView.__proto__ || Object.getPrototypeOf(InfoView)).call(this, model, controller));
 
         _this.setRoot(document.getElementById('city'));
+        _this._elements = {
+            content: _this.getRoot().querySelector('.city__content'),
+            loadingIndicator: _this.getRoot().querySelector('.loading-indicator')
+        };
+
         _this.events();
         return _this;
     }
 
     _createClass(InfoView, [{
+        key: 'getEl',
+        value: function getEl() {
+            return this._elements;
+        }
+    }, {
         key: 'events',
         value: function events() {
             var _this2 = this;
 
             this.getModel().addEventListener('change-all', function () {
-                return _this2.render();
+                _this2.render();
+                _this2.toggleLoadingIndicator();
             });
+            this.getModel().addEventListener('get-all', function () {
+                return _this2.toggleLoadingIndicator();
+            });
+        }
+    }, {
+        key: 'toggleLoadingIndicator',
+        value: function toggleLoadingIndicator() {
+            this.getEl().loadingIndicator.classList.toggle('loading-indicator--active');
         }
     }, {
         key: 'render',
         value: function render() {
             var info = this.getModel().get('info');
             var title = info.title;
-            var link = '<a class="city__link" href="' + info.link + '">Learn more</a>';
+            var link = '<a class="city__link" href="' + info.link + '" target="_blank" title="Learn more about ' + info.title + ' on wiki" >Learn more</a>';
             var details = void 0;
 
             if (info.extract) {
@@ -824,7 +847,7 @@ var InfoView = function (_View) {
                 link = '';
             }
 
-            this.getRoot().innerHTML = '\n            <h2 class="city__title">About ' + title + '</h2>\n            ' + details + '\n            <div class="city__actions">\n                ' + link + '\n            </div>\n        ';
+            this.getEl().content.innerHTML = '\n            <h2 class="city__title">About ' + title + '</h2>\n            ' + details + '\n            <div class="city__actions">\n                ' + link + '\n            </div>\n        ';
         }
     }]);
 
@@ -1019,6 +1042,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 'use strict';
 
+var toggleLoadingIndicator = function toggleLoadingIndicator(root) {
+    root.innerHTML = '\n        \n    ';
+};
+
 var WeatherView = function (_View) {
     _inherits(WeatherView, _View);
 
@@ -1038,7 +1065,8 @@ var WeatherView = function (_View) {
             refresh: _this.getRoot().querySelector('.weather-actions__refresh'),
             change: _this.getRoot().querySelector('.switch'),
             changeCheckbox: _this.getRoot().querySelector('.switch__checkbox'),
-            changeIndicator: _this.getRoot().querySelector('.switch__indicator')
+            changeIndicator: _this.getRoot().querySelector('.switch__indicator'),
+            loadingIndicator: _this.getRoot().querySelector('.loading-indicator')
         };
 
         _this.events();
@@ -1056,7 +1084,11 @@ var WeatherView = function (_View) {
             var _this2 = this;
 
             this.getModel().addEventListener('change-all', function () {
-                return _this2.render();
+                _this2.render();
+                _this2.toggleLoadingIndicator();
+            });
+            this.getModel().addEventListener('get-all', function () {
+                return _this2.toggleLoadingIndicator();
             });
             this.getModel().addEventListener('change-weather', function () {
                 return _this2.render();
@@ -1100,6 +1132,11 @@ var WeatherView = function (_View) {
             return checkbox.checked;
         }
     }, {
+        key: 'toggleLoadingIndicator',
+        value: function toggleLoadingIndicator() {
+            this.getEl().loadingIndicator.classList.toggle('loading-indicator--active');
+        }
+    }, {
         key: 'render',
         value: function render() {
             var system = this.getModel().getSettings().system;
@@ -1108,7 +1145,7 @@ var WeatherView = function (_View) {
 
             this.getEl().timePlace.innerHTML = '\n            <h2 class="weather-timeplace__title">' + (0, _utilis.getNonASCII)(weather.city, info.title) + '</h2>\n            <strong class="weather-timeplace__date">Weather on: <time>' + weather.time + '</time></strong>';
 
-            this.getEl().description.innerHTML = '\n            <div class="weather-description__container">\n                <img class="weathier-description__icon" src="' + weather.description.icon + '" alt="" aria-hidden="true">\n                <strong class="weather-description__temp">' + (0, _utilis.convertTemp)(weather.temp, system) + '</strong>\n            </div>\n            <strong class="weather-description__desc">' + weather.description.info + '</strong>\n            ';
+            this.getEl().description.innerHTML = '\n            <div class="weather-description__container">\n                <img class="weather-description__icon" src="' + weather.description.icon + '" alt="" aria-hidden="true">\n                <strong class="weather-description__temp">' + (0, _utilis.convertTemp)(weather.temp, system) + '</strong>\n            </div>\n            <strong class="weather-description__desc">' + weather.description.info + '</strong>\n            ';
 
             this.getEl().details.innerHTML = '\n            <thead class="weather-details__thead">\n                <tr>\n                    <th>Sunrise</th>\n                    <th>Sunset</th>\n                    <th>Pressure</th>\n                    <th>Humidity</th>\n                    <th>Wind</th>\n                </tr>\n            </thead>\n            <tbody class="weather-details__tbody">\n                <tr>\n                    <td>' + weather.sunrise + '</td>\n                    <td>' + weather.sunset + '</td>\n                    <td>' + weather.pressure + '</td>\n                    <td>' + weather.humidity + '</td>\n                    <td>' + (0, _utilis.convertSpeed)(weather.wind, system) + '</td>\n                </tr>\n            </tbody>';
         }

@@ -11,6 +11,8 @@ class SearchFormController extends Controller {
         const model =  this.getModel()
         let cityLocation;
 
+        model.emitEvent('get-all');
+
         model.getCityInfo(value)
             .then(location => {
                 model.set('location', location);

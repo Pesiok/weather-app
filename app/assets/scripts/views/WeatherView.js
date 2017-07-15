@@ -3,6 +3,12 @@ import {convertTemp, convertSpeed, getNonASCII} from '../utilities/utilis.js';
 
 'use strict';
 
+const toggleLoadingIndicator = root => {
+    root.innerHTML = `
+        
+    `;
+}
+
 class WeatherView extends View {
     constructor(model, controller) {
         super(model, controller);
@@ -17,7 +23,8 @@ class WeatherView extends View {
             refresh: this.getRoot().querySelector('.weather-actions__refresh'),
             change: this.getRoot().querySelector('.switch'),
             changeCheckbox: this.getRoot().querySelector('.switch__checkbox'),
-            changeIndicator: this.getRoot().querySelector('.switch__indicator')
+            changeIndicator: this.getRoot().querySelector('.switch__indicator'),
+            loadingIndicator: this.getRoot().querySelector('.loading-indicator')
         }
 
         this.events();
@@ -28,7 +35,11 @@ class WeatherView extends View {
     }
 
     events() {
-        this.getModel().addEventListener('change-all', () => this.render());
+        this.getModel().addEventListener('change-all', () => {
+            this.render();
+            this.toggleLoadingIndicator();
+        });
+        this.getModel().addEventListener('get-all', () => this.toggleLoadingIndicator());
         this.getModel().addEventListener('change-weather', () => this.render());
         this.getModel().addEventListener('load', () => {
             this.getController().onLoad();
@@ -65,6 +76,10 @@ class WeatherView extends View {
          return checkbox.checked;
     }
 
+    toggleLoadingIndicator() {
+        this.getEl().loadingIndicator.classList.toggle('loading-indicator--active');
+    }
+
     render() {
         const system = this.getModel().getSettings().system;
         const weather = this.getModel().get('weather');
@@ -76,7 +91,7 @@ class WeatherView extends View {
 
         this.getEl().description.innerHTML = `
             <div class="weather-description__container">
-                <img class="weathier-description__icon" src="${weather.description.icon}" alt="" aria-hidden="true">
+                <img class="weather-description__icon" src="${weather.description.icon}" alt="" aria-hidden="true">
                 <strong class="weather-description__temp">${convertTemp(weather.temp, system)}</strong>
             </div>
             <strong class="weather-description__desc">${weather.description.info}</strong>

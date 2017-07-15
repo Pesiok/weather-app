@@ -2,11 +2,16 @@
     position: absolute;
     top: 0;
     z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
 
-    height: 6rem;
+    @include atSmall() {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+
+        height: 6rem;
+    }
+
+    
     width: 100%;
 
     background-color: $primaryLight;
@@ -16,12 +21,15 @@
 
     &__title {
         text-decoration: none;
-        color: $secondaryDark;
-        font-size: 2rem;
+        color: $primaryDark;
+        font-size: 1.4rem;
+
+        @include atSmall() {
+            font-size: 2rem;
+        }
 
         h1 {
              margin: 0;    
-            
         }
         
     }
