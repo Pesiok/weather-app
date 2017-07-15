@@ -92,7 +92,7 @@ export const parseWeatherInfo = (data, system) => {
         sunset: parseTime(data.sys.sunset),
         description: {
             info: data.weather[0].description,
-            icon: `http://openweathermap.org/img/w/${data.weather[0].icon}.png`
+            icon: `https://crossorigin.me/http://openweathermap.org/img/w/${data.weather[0].icon}.png`
         }
     };
 }
