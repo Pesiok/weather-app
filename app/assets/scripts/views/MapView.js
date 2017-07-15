@@ -9,7 +9,6 @@ class MapView extends View {
         this.setRoot(document.getElementById('map'));
 
         this.events();
-        console.log(mapStyle);
     }
 
     events() {

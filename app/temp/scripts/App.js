@@ -251,7 +251,7 @@ var Controller = exports.Controller = function () {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.parseWikiInfo = exports.fetchWikiInfo = exports.parseWeatherInfo = exports.convertSpeed = exports.convertTemp = exports.fetchWeatherInfo = exports.parseCityInfo = exports.fetchCityInfo = exports.parseCoords = exports.fetchCoords = exports.getNonASCII = undefined;
+exports.parseWikiInfo = exports.fetchWikiInfo = exports.parseWeatherInfo = exports.fetchWeatherInfo = exports.parseCityInfo = exports.fetchCityInfo = exports.parseCoords = exports.fetchCoords = exports.getNonASCII = undefined;
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
@@ -308,7 +308,10 @@ var fetchCityInfo = exports.fetchCityInfo = function fetchCityInfo(value, key) {
 var parseCityInfo = exports.parseCityInfo = function parseCityInfo(data) {
     if (!data.status === 'OK') {
         throw new Error('Incorrect data status');
+    } else if (!data.results[0]) {
+        return null;
     }
+
     var info = data.results[0];
     return {
         name: info.address_components[0].short_name,
@@ -322,21 +325,11 @@ var fetchWeatherInfo = exports.fetchWeatherInfo = function fetchWeatherInfo(coor
         lat = _coords[0],
         lon = _coords[1];
 
-    var url = 'http://api.openweathermap.org/data/2.5/weather?lat=' + lat + '&lon=' + lon + '&appid=' + key;
+    var url = 'https://api.apixu.com/v1/current.json?key=' + key + '&q=' + lat + ',' + lon;
 
-    return (0, _jsonp2.default)(url).then(function (response) {
+    return fetch(url).then(function (response) {
         return response.json();
     });
-};
-
-var convertTemp = exports.convertTemp = function convertTemp(data, system) {
-    if (system === 'metric') return Math.round(data - 273.15) + ' &#8451;';
-    if (system === 'imperial') return Math.round(data * 9 / 5 - 459.67) + ' &#8457;';
-};
-
-var convertSpeed = exports.convertSpeed = function convertSpeed(data, system) {
-    if (system === 'metric') return Math.round(data) + ' m/s';
-    if (system === 'imperial') return Math.round(data * 2.23693629) + ' mph';
 };
 
 var parseTime = function parseTime(isoString) {
@@ -347,20 +340,31 @@ var parseDate = function parseDate(isoString) {
     return new Date(isoString * 1000).toDateString().substr(4, 3);
 };
 
-var parseWeatherInfo = exports.parseWeatherInfo = function parseWeatherInfo(data, system) {
+var parseWeatherInfo = exports.parseWeatherInfo = function parseWeatherInfo(data) {
     return {
-        country: data.sys.country,
-        time: parseDate(data.dt) + ', ' + parseTime(data.dt),
-        city: data.name,
-        temp: data.main.temp,
-        pressure: Math.round(data.main.pressure) + ' hPa',
-        humidity: data.main.humidity + ' %',
-        wind: data.wind.speed,
-        sunrise: parseTime(data.sys.sunrise),
-        sunset: parseTime(data.sys.sunset),
+        country: data.location.country,
+        time: parseDate(data.current.last_updated_epoch) + ', ' + parseTime(data.current.last_updated_epoch),
+        city: data.location.name,
+        temp: {
+            metric: data.current.temp_c + ' &#8451;',
+            imperial: data.current.temp_f + ' &#8457;'
+        },
+        pressure: {
+            metric: data.current.pressure_mb + ' hPa',
+            imperial: data.current.pressure_in + ' inHg'
+        },
+        humidity: data.current.humidity + ' %',
+        wind: {
+            metric: data.current.wind_mph + ' mph',
+            imperial: data.current.wind_kph + ' kph'
+        },
+        feelsLike: {
+            metric: data.current.feelslike_c + ' &#8451;',
+            imperial: data.current.feelslike_f + ' &#8457;'
+        },
         description: {
-            info: data.weather[0].description,
-            icon: 'https://crossorigin.me/http://openweathermap.org/img/w/' + data.weather[0].icon + '.png'
+            info: data.current.condition.text,
+            icon: 'https:' + data.current.condition.icon
         }
     };
 };
@@ -377,7 +381,7 @@ var parseWikiInfo = exports.parseWikiInfo = function parseWikiInfo(data) {
     var info = Object.values(data.query.pages)[0];
     return {
         title: info.title,
-        link: 'http://en.wikipedia.org/?curid=' + info.pageid,
+        link: 'https://en.wikipedia.org/?curid=' + info.pageid,
         extract: info.extract
     };
 };
@@ -457,8 +461,6 @@ var MapController = function (_Controller) {
 
             map.marker.setPosition(latLng);
             map.map.setCenter(latLng);
-
-            this._getAllInfo();
         }
     }, {
         key: 'onDbClick',
@@ -467,8 +469,7 @@ var MapController = function (_Controller) {
             var coords = [event.latLng.lat(), event.latLng.lng()];
 
             model.set('coords', coords);
-            console.log(model.get('coords'));
-            model.emitEvent('change-coords');
+            this._getAllInfo();
         }
     }]);
 
@@ -537,9 +538,9 @@ var SearchFormController = function (_Controller) {
             }).then(function (info) {
                 return model.set('info', info);
             }).then(function () {
-                console.log(model.get('weather'));
-                console.log(model.get('info'));
-                console.log(model.get('location'));
+                // console.log(model.get('weather'));
+                // console.log(model.get('info'));
+                // console.log(model.get('location'));
                 model.emitEvent('change-all');
             }).catch(function (error) {
                 return console.log(error);
@@ -741,12 +742,11 @@ var AppModel = function (_Model) {
             var coords = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.get('location').coords;
 
             var weatherKey = this.getSettings().weatherKey;
-            var system = this.getSettings().system;
 
             return (0, _utilis.parseCoords)(coords).then(function (parsedCoords) {
                 return (0, _utilis.fetchWeatherInfo)(parsedCoords, weatherKey);
             }).then(function (weatherInfo) {
-                return (0, _utilis.parseWeatherInfo)(weatherInfo, system);
+                return (0, _utilis.parseWeatherInfo)(weatherInfo);
             });
         }
     }, {
@@ -896,7 +896,6 @@ var MapView = function (_View) {
         _this.setRoot(document.getElementById('map'));
 
         _this.events();
-        console.log(_mapStyle2.default);
         return _this;
     }
 
@@ -1042,10 +1041,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 'use strict';
 
-var toggleLoadingIndicator = function toggleLoadingIndicator(root) {
-    root.innerHTML = '\n        \n    ';
-};
-
 var WeatherView = function (_View) {
     _inherits(WeatherView, _View);
 
@@ -1145,9 +1140,9 @@ var WeatherView = function (_View) {
 
             this.getEl().timePlace.innerHTML = '\n            <h2 class="weather-timeplace__title">' + (0, _utilis.getNonASCII)(weather.city, info.title) + '</h2>\n            <strong class="weather-timeplace__date">Weather on: <time>' + weather.time + '</time></strong>';
 
-            this.getEl().description.innerHTML = '\n            <div class="weather-description__container">\n                <img class="weather-description__icon" src="' + weather.description.icon + '" alt="" aria-hidden="true">\n                <strong class="weather-description__temp">' + (0, _utilis.convertTemp)(weather.temp, system) + '</strong>\n            </div>\n            <strong class="weather-description__desc">' + weather.description.info + '</strong>\n            ';
+            this.getEl().description.innerHTML = '\n            <div class="weather-description__container">\n                <img class="weather-description__icon" src="' + weather.description.icon + '" alt="" aria-hidden="true">\n                <strong class="weather-description__temp">' + weather.temp[system] + '</strong>\n            </div>\n            <strong class="weather-description__desc">' + weather.description.info + '</strong>\n            ';
 
-            this.getEl().details.innerHTML = '\n            <thead class="weather-details__thead">\n                <tr>\n                    <th>Sunrise</th>\n                    <th>Sunset</th>\n                    <th>Pressure</th>\n                    <th>Humidity</th>\n                    <th>Wind</th>\n                </tr>\n            </thead>\n            <tbody class="weather-details__tbody">\n                <tr>\n                    <td>' + weather.sunrise + '</td>\n                    <td>' + weather.sunset + '</td>\n                    <td>' + weather.pressure + '</td>\n                    <td>' + weather.humidity + '</td>\n                    <td>' + (0, _utilis.convertSpeed)(weather.wind, system) + '</td>\n                </tr>\n            </tbody>';
+            this.getEl().details.innerHTML = '\n            <thead class="weather-details__thead">\n                <tr>\n                    <th>Feels like</th>\n                    <th>Pressure</th>\n                    <th>Humidity</th>\n                    <th>Wind</th>\n                </tr>\n            </thead>\n            <tbody class="weather-details__tbody">\n                <tr>\n                    <td>' + weather.feelsLike[system] + '</td>\n                    <td>' + weather.pressure[system] + '</td>\n                    <td>' + weather.humidity + '</td>\n                    <td>' + weather.wind[system] + '</td>\n                </tr>\n            </tbody>';
         }
     }]);
 
@@ -1162,7 +1157,7 @@ exports.default = WeatherView;
 
 module.exports = {
 	"geocodeKey": "AIzaSyCzS_VaGlP12Ddwn9hQIWW3qi_vcc2PWdc",
-	"weatherKey": "ecade6d2f60bfbb23bf403c610064563",
+	"weatherKey": "cf8c949c63b14585928165125171507",
 	"mapKey": "AIzaSyCAoZKb18BDrDlKTiNGe_K6NsfRXxE1IqE"
 };
 

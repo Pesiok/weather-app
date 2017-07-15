@@ -1,13 +1,7 @@
 import {View} from '../utilities/MVC.js';
-import {convertTemp, convertSpeed, getNonASCII} from '../utilities/utilis.js';
+import {getNonASCII} from '../utilities/utilis.js';
 
 'use strict';
-
-const toggleLoadingIndicator = root => {
-    root.innerHTML = `
-        
-    `;
-}
 
 class WeatherView extends View {
     constructor(model, controller) {
@@ -84,6 +78,8 @@ class WeatherView extends View {
         const system = this.getModel().getSettings().system;
         const weather = this.getModel().get('weather');
         const info = this.getModel().get('info');
+
+
         
         this.getEl().timePlace.innerHTML = `
             <h2 class="weather-timeplace__title">${getNonASCII(weather.city, info.title)}</h2>
@@ -92,7 +88,7 @@ class WeatherView extends View {
         this.getEl().description.innerHTML = `
             <div class="weather-description__container">
                 <img class="weather-description__icon" src="${weather.description.icon}" alt="" aria-hidden="true">
-                <strong class="weather-description__temp">${convertTemp(weather.temp, system)}</strong>
+                <strong class="weather-description__temp">${weather.temp[system]}</strong>
             </div>
             <strong class="weather-description__desc">${weather.description.info}</strong>
             `;
@@ -101,8 +97,7 @@ class WeatherView extends View {
         this.getEl().details.innerHTML = `
             <thead class="weather-details__thead">
                 <tr>
-                    <th>Sunrise</th>
-                    <th>Sunset</th>
+                    <th>Feels like</th>
                     <th>Pressure</th>
                     <th>Humidity</th>
                     <th>Wind</th>
@@ -110,11 +105,10 @@ class WeatherView extends View {
             </thead>
             <tbody class="weather-details__tbody">
                 <tr>
-                    <td>${weather.sunrise}</td>
-                    <td>${weather.sunset}</td>
-                    <td>${weather.pressure}</td>
+                    <td>${weather.feelsLike[system]}</td>
+                    <td>${weather.pressure[system]}</td>
                     <td>${weather.humidity}</td>
-                    <td>${convertSpeed(weather.wind, system)}</td>
+                    <td>${weather.wind[system]}</td>
                 </tr>
             </tbody>`;
     }

@@ -31,9 +31,9 @@ class SearchFormController extends Controller {
             .then(() => model.getWikiInfo(cityLocation))
             .then(info => model.set('info', info))
             .then(() => {
-                console.log(model.get('weather'));
-                console.log(model.get('info'));
-                console.log(model.get('location'));
+                // console.log(model.get('weather'));
+                // console.log(model.get('info'));
+                // console.log(model.get('location'));
                 model.emitEvent('change-all');
             })  
             .catch(error => console.log(error));

@@ -45,7 +45,10 @@ export const fetchCityInfo = (value, key) => {
 export const parseCityInfo = data => {
     if (!data.status === 'OK') {
         throw new Error('Incorrect data status');
-    } 
+    } else if (!data.results[0]) {
+       return null;
+    }
+
     const info = data.results[0];
     return {
         name: info.address_components[0].short_name,
@@ -56,19 +59,9 @@ export const parseCityInfo = data => {
 
 export const fetchWeatherInfo = (coords, key) => {
     const [lat, lon] = coords;
-    const url = `http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${key}`;
+    const url = `https://api.apixu.com/v1/current.json?key=${key}&q=${lat},${lon}`;
 
-    return jsonp(url).then(response => response.json());
-}
-
-export const convertTemp = (data, system) => {
-    if (system === 'metric') return `${Math.round(data - 273.15)} &#8451;`;
-    if (system === 'imperial') return `${Math.round(data * 9/5 - 459.67)} &#8457;`;
-}
-
-export const convertSpeed = (data, system) => {
-    if (system === 'metric') return `${Math.round(data)} m/s`
-    if (system === 'imperial') return `${Math.round(data * 2.23693629)} mph`;
+    return fetch(url).then(response => response.json());
 }
 
 const parseTime = isoString => {
@@ -79,20 +72,31 @@ const parseDate = isoString => {
     return new Date(isoString * 1000).toDateString().substr(4, 3);
 }
 
-export const parseWeatherInfo = (data, system) => {
+export const parseWeatherInfo = data => {
     return {
-        country: data.sys.country,
-        time: `${parseDate(data.dt)}, ${parseTime(data.dt)}`,
-        city: data.name,
-        temp: data.main.temp,
-        pressure: `${Math.round(data.main.pressure)} hPa`,
-        humidity: `${data.main.humidity} %`,
-        wind: data.wind.speed,
-        sunrise: parseTime(data.sys.sunrise),
-        sunset: parseTime(data.sys.sunset),
+        country: data.location.country,
+        time: `${parseDate(data.current.last_updated_epoch)}, ${parseTime(data.current.last_updated_epoch)}`,
+        city: data.location.name,
+        temp: {
+            metric: `${data.current.temp_c} &#8451;`,
+            imperial: `${data.current.temp_f} &#8457;`
+        },
+        pressure: {
+            metric: `${data.current.pressure_mb} hPa`,
+            imperial: `${data.current.pressure_in} inHg`
+        },
+        humidity: `${data.current.humidity} %`,
+        wind: {
+            metric: `${data.current.wind_mph} mph`,
+            imperial: `${data.current.wind_kph} kph`
+        },
+        feelsLike: {
+            metric: `${data.current.feelslike_c} &#8451;`,
+            imperial: `${data.current.feelslike_f} &#8457;`
+        },
         description: {
-            info: data.weather[0].description,
-            icon: `https://crossorigin.me/http://openweathermap.org/img/w/${data.weather[0].icon}.png`
+            info: data.current.condition.text,
+            icon: `https:${data.current.condition.icon}`
         }
     };
 }
@@ -107,7 +111,7 @@ export const parseWikiInfo = data => {
     const info = Object.values(data.query.pages)[0];
     return {
         title: info.title,
-        link: `http://en.wikipedia.org/?curid=${info.pageid}`,
+        link: `https://en.wikipedia.org/?curid=${info.pageid}`,
         extract: info.extract
     }
 }

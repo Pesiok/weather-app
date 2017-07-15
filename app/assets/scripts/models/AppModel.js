@@ -52,11 +52,10 @@ class AppModel extends Model {
 
     getWeatherInfo(coords = this.get('location').coords) {
         const weatherKey = this.getSettings().weatherKey;
-        const system = this.getSettings().system;
         
         return parseCoords(coords)
             .then(parsedCoords => fetchWeatherInfo(parsedCoords, weatherKey))
-            .then(weatherInfo => parseWeatherInfo(weatherInfo, system));
+            .then(weatherInfo => parseWeatherInfo(weatherInfo));
     }
 
     getWikiInfo(city) {

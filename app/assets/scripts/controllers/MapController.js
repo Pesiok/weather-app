@@ -37,8 +37,6 @@ class MapController extends Controller {
 
         map.marker.setPosition(latLng);
         map.map.setCenter(latLng);
-
-        this._getAllInfo();
     }
 
     onDbClick(event) {
@@ -46,8 +44,7 @@ class MapController extends Controller {
         const coords = [event.latLng.lat(), event.latLng.lng()];
    
         model.set('coords', coords);
-         console.log(model.get('coords'));
-        model.emitEvent('change-coords');
+        this._getAllInfo();
 
         
     }
