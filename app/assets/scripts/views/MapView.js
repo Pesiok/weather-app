@@ -8,16 +8,31 @@ class MapView extends View {
         super(model, controller);
         this.setRoot(document.getElementById('map'));
 
+        this._elements = {
+            map: this.getRoot().querySelector('.section__map')
+        }
+
         this.events();
     }
 
+    getEl() {
+        return this._elements;
+    }
+
     events() {
-        this.getModel().addEventListener('initial-coords', () => this.setUpMap());
-        this.getModel().addEventListener('change-coords', () => this.getController().onCoordsChange());
+        const model = this.getModel();
+
+        model.addEventListener('initial-coords', () => this.setUpMap());
+        model.addEventListener('change-coords', () => this.getController().onCoordsChange());
     }
 
     mapEvents() {
-        this.getModel().get('map').map.addListener('dblclick', event => this.getController().onDbClick(event));
+        const map = this.getModel().get('map').map;
+
+        map.addListener('dblclick', event => this.getController().onDbClick(event));
+        google.maps.event.addDomListener(window, 'resize', () => this.getController().onResize());
+
+        this.getModel().addEventListener('change-all', () => this.getController().onResize());
     }
 
     setUpMap() {
@@ -27,7 +42,7 @@ class MapView extends View {
         const coords = model.get('coords');
 
         const initMap = () => {
-            const map = new google.maps.Map(this.getRoot(), {
+            const map = new google.maps.Map(this.getEl().map, {
                 center: {
                     lat: coords[0], 
                     lng: coords[1]

@@ -7,14 +7,18 @@ html {
 
     font-family: 'Roboto', sans-serif;
     line-height: normal;
+
 }
 
 *, *::after, *::before {
     box-sizing: inherit;
+
 }
 
 body {
-    background-color: $materialBackground;
+    background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAYAAADgzO9IAAAAMElEQVQYV2P8v933/8kLZxjQAeOJdsn/5gYmDOiSYAmQanRJuAS6JIoEsiSGBEwSAOOnHgwjF4tWAAAAAElFTkSuQmCC
+    ) repeat;
     height: 100%;
+
 
 }

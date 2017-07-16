@@ -10,6 +10,13 @@
         font-size: 1.6rem;
     }
 
+    &:focus,
+    &:hover {
+        .switch__indicator {
+            color: $secondaryDark;
+        }
+    }
+
     &__checkbox {
         position: absolute;
         opacity: 0;
@@ -28,6 +35,7 @@
         z-index: 0;
 
         color: $primaryDark;
+        transition: color 0.2s ease-in;
         
         text-align: center;
         user-select: none;

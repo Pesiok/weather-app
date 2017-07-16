@@ -31,12 +31,12 @@ class MapController extends Controller {
     }
 
     onCoordsChange() {
-        const map = this.getModel().get('map');
+        const mapObj = this.getModel().get('map');
         const [lat, lng] = this.getModel().get('coords')
         const latLng = new google.maps.LatLng(lat, lng);
 
-        map.marker.setPosition(latLng);
-        map.map.setCenter(latLng);
+        mapObj.marker.setPosition(latLng);
+        mapObj.map.setCenter(latLng);
     }
 
     onDbClick(event) {
@@ -44,9 +44,17 @@ class MapController extends Controller {
         const coords = [event.latLng.lat(), event.latLng.lng()];
    
         model.set('coords', coords);
+        model.emitEvent('change-coords');
         this._getAllInfo();
+    }
 
-        
+    onResize() {
+        console.log('map resized');
+        const map = this.getModel().get('map').map;
+        google.maps.event.trigger(map, 'resize');
+
+        map.setCenter(map.getCenter());
+
     }
 
 }

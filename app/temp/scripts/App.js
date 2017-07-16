@@ -450,7 +450,7 @@ var MapController = function (_Controller) {
     }, {
         key: 'onCoordsChange',
         value: function onCoordsChange() {
-            var map = this.getModel().get('map');
+            var mapObj = this.getModel().get('map');
 
             var _getModel$get = this.getModel().get('coords'),
                 _getModel$get2 = _slicedToArray(_getModel$get, 2),
@@ -459,8 +459,8 @@ var MapController = function (_Controller) {
 
             var latLng = new google.maps.LatLng(lat, lng);
 
-            map.marker.setPosition(latLng);
-            map.map.setCenter(latLng);
+            mapObj.marker.setPosition(latLng);
+            mapObj.map.setCenter(latLng);
         }
     }, {
         key: 'onDbClick',
@@ -469,7 +469,17 @@ var MapController = function (_Controller) {
             var coords = [event.latLng.lat(), event.latLng.lng()];
 
             model.set('coords', coords);
+            model.emitEvent('change-coords');
             this._getAllInfo();
+        }
+    }, {
+        key: 'onResize',
+        value: function onResize() {
+            console.log('map resized');
+            var map = this.getModel().get('map').map;
+            google.maps.event.trigger(map, 'resize');
+
+            map.setCenter(map.getCenter());
         }
     }]);
 
@@ -626,7 +636,7 @@ var WeatherController = function (_Controller) {
             }).then(function (info) {
                 return model.set('info', info);
             }).then(function () {
-                return model.emitEvent('change-all');
+                model.emitEvent('change-all');
             }).catch(function (error) {
                 return console.log(error);
             });
@@ -895,19 +905,30 @@ var MapView = function (_View) {
 
         _this.setRoot(document.getElementById('map'));
 
+        _this._elements = {
+            map: _this.getRoot().querySelector('.section__map')
+        };
+
         _this.events();
         return _this;
     }
 
     _createClass(MapView, [{
+        key: 'getEl',
+        value: function getEl() {
+            return this._elements;
+        }
+    }, {
         key: 'events',
         value: function events() {
             var _this2 = this;
 
-            this.getModel().addEventListener('initial-coords', function () {
+            var model = this.getModel();
+
+            model.addEventListener('initial-coords', function () {
                 return _this2.setUpMap();
             });
-            this.getModel().addEventListener('change-coords', function () {
+            model.addEventListener('change-coords', function () {
                 return _this2.getController().onCoordsChange();
             });
         }
@@ -916,8 +937,17 @@ var MapView = function (_View) {
         value: function mapEvents() {
             var _this3 = this;
 
-            this.getModel().get('map').map.addListener('dblclick', function (event) {
+            var map = this.getModel().get('map').map;
+
+            map.addListener('dblclick', function (event) {
                 return _this3.getController().onDbClick(event);
+            });
+            google.maps.event.addDomListener(window, 'resize', function () {
+                return _this3.getController().onResize();
+            });
+
+            this.getModel().addEventListener('change-all', function () {
+                return _this3.getController().onResize();
             });
         }
     }, {
@@ -931,7 +961,7 @@ var MapView = function (_View) {
             var coords = model.get('coords');
 
             var initMap = function initMap() {
-                var map = new google.maps.Map(_this4.getRoot(), {
+                var map = new google.maps.Map(_this4.getEl().map, {
                     center: {
                         lat: coords[0],
                         lng: coords[1]

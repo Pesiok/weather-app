@@ -37,7 +37,9 @@ class WeatherController extends Controller {
             })
             .then(() => model.getWikiInfo(getNonASCII(weatherCity, locationCity)))
             .then(info => model.set('info', info))
-            .then(() => model.emitEvent('change-all'))
+            .then(() => {
+                model.emitEvent('change-all');
+            })
             .catch(error => console.log(error));
     }
 

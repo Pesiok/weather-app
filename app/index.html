@@ -12,7 +12,7 @@
 </head>
 <body>
     <header class="header">
-        <a class="header__title" href="#"><h1>Local Weather</h1></a>
+        <a class="header__title" href="https://pesiok.github.io/weather-app/"><h1>Local Weather</h1></a>
         <form class="form" id="searchForm">
             <label class="form__label" for="searchCity">Find city</label>
             <input class="form__input" id="searchCity" type="search" placeholder="Find city">
@@ -22,44 +22,47 @@
         </form>
     </header>
     <main class="main">
-        <!-- <div class="map"> -->
-        <div id="map" class="map"></div>
-        <!-- </div> -->
-        <section class="main__section">
-            <h2 class="main__title">Information</h2>
-            <article id="weather" class="content-container weather">
-                <div class="loading-indicator" aria-hidden="true">
-                    <div class="loading-indicator__bounce"></div>
-                </div>
-                <div class="weather__wrapper">
-                    <header class="weather-timeplace">
+        <div class="main__wrapper">
+            <section class="section">
+                <h2 class="section__title">Information</h2>
+                <article id="weather" class="content-container weather">
+                    <div class="loading-indicator" aria-hidden="true">
+                        <div class="loading-indicator__bounce"></div>
+                    </div>
+                    <div class="weather__wrapper">
+                        <header class="weather-timeplace">
+                            <!-- live content -->
+                        </header>
+                        <div class="weather-description">
+                            <!-- live content -->
+                        </div>
+                    </div>
+                    <table class="weather-details">
                         <!-- live content -->
-                    </header>
-                    <div class="weather-description">
+                    </table>
+                    <div class="weather-actions">
+                        <label class="switch">
+                            <input class="switch__checkbox" type="checkbox" checked>
+                            <span class="switch__indicator material-icons" aria-hidden="true">check_box</span>
+                            Use metric system.
+                        </label>
+                        <button class="weather-actions__refresh material-icons" title="Refresh to use current location.">refresh</button>
+                    </div>
+                </article>
+                <article id="city" class="city">
+                    <div class="loading-indicator" aria-hidden="true">
+                        <div class="loading-indicator__bounce"></div>
+                    </div>
+                    <div class="city__content">
                         <!-- live content -->
                     </div>
-                </div>
-                <table class="weather-details">
-                    <!-- live content -->
-                </table>
-                <div class="weather-actions">
-                    <label class="switch">
-                        <input class="switch__checkbox" type="checkbox" checked>
-                        <span class="switch__indicator material-icons" aria-hidden="true">check_box</span>
-                        Use metric system.
-                    </label>
-                    <button class="weather-actions__refresh material-icons" title="Refresh to use current location.">refresh</button>
-                </div>
-            </article>
-            <article id="city" class="city">
-                <div class="loading-indicator" aria-hidden="true">
-                    <div class="loading-indicator__bounce"></div>
-                </div>
-                <div class="city__content">
-                    <!-- live content -->
-                </div>
-            </article>
-        </section>
+                </article>
+            </section>
+            <section id="map" class="section--map">
+                <h2 class="section__title">Map</h2>
+                <div class="section__map"></div>
+            </section>
+        </div>
     </main>
     <!-- build:js assets/scripts/app.js -->
     <script src="/temp/scripts/app.js"></script>

@@ -3,10 +3,6 @@
 
     margin-bottom: 2rem;
 
-    @include atLarge() {
-        margin-bottom: 6rem;
-    }
-
     background-color: $primaryLight;
     @include mdShadow(3);
 

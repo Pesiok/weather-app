@@ -1,7 +1,5 @@
 .header {
-    position: absolute;
-    top: 0;
-    z-index: 10;
+    height: 7rem;
 
     @include atSmall() {
         display: flex;
@@ -11,18 +9,23 @@
         height: 6rem;
     }
 
-    
     width: 100%;
 
     background-color: $primaryLight;
-    @include mdShadow(1);
+    @include mdShadow(2);
 
     text-align: center;
 
     &__title {
         text-decoration: none;
-        color: $primaryDark;
+        color: $secondaryDark;
         font-size: 1.4rem;
+        transition: color 0.2s ease-in;
+
+        &:hover,
+        &:focus {
+            color: $secondary;
+        }
 
         @include atSmall() {
             font-size: 2rem;

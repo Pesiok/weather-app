@@ -29,13 +29,13 @@
     &__link {
         text-decoration: none;
         font-size: 1.8rem;
-        color: $secondaryDark;
+        color: $primaryDark;
+        transition: color 0.2s ease-in;
 
         &:hover,
         &:focus {
-            color: $secondary;
+            color: $secondaryDark;
         }
-
     }
 
     p {

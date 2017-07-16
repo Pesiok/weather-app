@@ -1,0 +1,44 @@
+.section {
+    width: 100%;
+        
+    @include atSmall() {
+        height: 100%;
+        margin: 0.5rem;
+    }
+
+    @include atLarge() {
+        width: 50rem;
+    }
+
+    &--map {
+        position: relative;
+        width: 100%;
+        height: 50rem;
+
+        margin-top: 1rem;
+    
+        @include atSmall() {
+            height: auto;
+            margin: 0.5rem;
+        }
+
+        @include mdShadow(3);
+        
+        & > * {
+            display: block;
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+        }
+    }
+
+   &__title {
+       @include visuallyHidden();
+   }
+}
