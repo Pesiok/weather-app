@@ -8,8 +8,6 @@ class WeatherView extends View {
         super(model, controller);
         this.setRoot(document.getElementById('weather'));
 
-        // const containers = [...this.getRoot().querySelectorAll('.weather-info__container')];
-
         this._elements = {
             timePlace: this.getRoot().querySelector('.weather-timeplace'),
             description: this.getRoot().querySelector('.weather-description'),
@@ -29,16 +27,22 @@ class WeatherView extends View {
     }
 
     events() {
-        this.getModel().addEventListener('change-all', () => {
+        const model = this.getModel();
+
+        // model events
+        model.addEventListener('change-all', () => {
             this.render();
             this.toggleLoadingIndicator();
         });
-        this.getModel().addEventListener('get-all', () => this.toggleLoadingIndicator());
-        this.getModel().addEventListener('change-weather', () => this.render());
-        this.getModel().addEventListener('load', () => {
+        model.addEventListener('get-all', () => this.toggleLoadingIndicator());
+        model.addEventListener('get-all-error', () => this.toggleLoadingIndicator());
+        model.addEventListener('change-weather', () => this.render());
+        model.addEventListener('load', () => {
             this.getController().onLoad();
             this.setCheckboxState();
         });
+        
+        // DOM events
         this.getEl().refresh.addEventListener('click', () => this.getController().onRefresh());
         this.getEl().change.addEventListener('change', () => {
             const checkboxState = this.toggleCheckbox();
@@ -79,8 +83,6 @@ class WeatherView extends View {
         const weather = this.getModel().get('weather');
         const info = this.getModel().get('info');
 
-
-        
         this.getEl().timePlace.innerHTML = `
             <h2 class="weather-timeplace__title">${getNonASCII(weather.city, info.title)}</h2>
             <strong class="weather-timeplace__date">Weather on: <time>${weather.time}</time></strong>`;
@@ -93,7 +95,6 @@ class WeatherView extends View {
             <strong class="weather-description__desc">${weather.description.info}</strong>
             `;
            
-
         this.getEl().details.innerHTML = `
             <thead class="weather-details__thead">
                 <tr>

@@ -44,9 +44,9 @@ export const fetchCityInfo = (value, key) => {
 
 export const parseCityInfo = data => {
     if (!data.status === 'OK') {
-        throw new Error('Incorrect data status');
+        throw 'incorrect data status';
     } else if (!data.results[0]) {
-       return null;
+        throw 'no results found';
     }
 
     const info = data.results[0];
@@ -115,6 +115,19 @@ export const parseWikiInfo = data => {
         extract: info.extract
     }
 }
+
+// source: https://gist.github.com/beaucharman/1f93fdd7c72860736643d1ab274fee1a
+export const debounce = function(callback, wait, context = this) {
+    let timeout = null;
+    let args = null;
+    const toBeCalledLater = () => callback.apply(context, args);
+
+	return function() {
+        args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(toBeCalledLater, wait);
+	};
+};
 
 
 

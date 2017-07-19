@@ -40,7 +40,7 @@ class WeatherController extends Controller {
             .then(() => {
                 model.emitEvent('change-all');
             })
-            .catch(error => console.log(error));
+            .catch(error => model.emitEvent('get-all-cancel', error));
     }
 
     onChange(checkBoxState) {

@@ -20,11 +20,14 @@ class InfoView extends View {
     }
 
     events() {
-        this.getModel().addEventListener('change-all', () => {
+        const model = this.getModel();
+
+        model.addEventListener('change-all', () => {
              this.render();
              this.toggleLoadingIndicator();
         });
-        this.getModel().addEventListener('get-all', () => this.toggleLoadingIndicator());
+        model.addEventListener('get-all', () => this.toggleLoadingIndicator());
+        model.addEventListener('get-all-error', () => this.toggleLoadingIndicator());
     }
 
     toggleLoadingIndicator() {

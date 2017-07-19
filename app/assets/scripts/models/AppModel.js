@@ -1,3 +1,5 @@
+import config from '../config/config.json';
+import { Model } from '../utilities/MVC.js';
 import {
     fetchCoords, 
     parseCoords,
@@ -8,8 +10,6 @@ import {
     fetchWikiInfo,
     parseWikiInfo
 } from '../utilities/utilis.js'
-import config from '../config/config.json';
-import {Model} from '../utilities/MVC.js';
 
 'use strict';
 
@@ -66,9 +66,6 @@ class AppModel extends Model {
         this._settings.system = newSystem;
         localStorage.setItem('app-system', newSystem);
     }
-
-
-
 }
 
 export default AppModel;

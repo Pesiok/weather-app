@@ -1,8 +1,6 @@
 html {
     box-sizing: border-box;
 
-    height: 100%;
-
     font-size: 62.5%;
 
     font-family: 'Roboto', sans-serif;
@@ -14,11 +12,13 @@ html {
     box-sizing: inherit;
 
 }
-
+html,
 body {
-    background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAYAAADgzO9IAAAAMElEQVQYV2P8v933/8kLZxjQAeOJdsn/5gYmDOiSYAmQanRJuAS6JIoEsiSGBEwSAOOnHgwjF4tWAAAAAElFTkSuQmCC
+     background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAYAAADgzO9IAAAAMElEQVQYV2P8v933/8kLZxjQAeOJdsn/5gYmDOiSYAmQanRJuAS6JIoEsiSGBEwSAOOnHgwjF4tWAAAAAElFTkSuQmCC
     ) repeat;
     height: 100%;
+}
 
-
+.html--modal-open {
+    overflow: hidden;
 }

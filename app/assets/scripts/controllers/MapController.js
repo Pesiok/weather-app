@@ -27,7 +27,7 @@ class MapController extends Controller {
             .then(() => model.getWikiInfo(weatherCity))
             .then(info => model.set('info', info))
             .then(() => model.emitEvent('change-all'))
-            .catch(error => console.log(error));
+            .catch(error => model.emitEvent('get-all-cancel', error));
     }
 
     onCoordsChange() {
@@ -49,12 +49,10 @@ class MapController extends Controller {
     }
 
     onResize() {
-        console.log('map resized');
         const map = this.getModel().get('map').map;
         google.maps.event.trigger(map, 'resize');
 
         map.setCenter(map.getCenter());
-
     }
 
 }

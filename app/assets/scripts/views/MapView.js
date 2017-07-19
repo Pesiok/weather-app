@@ -1,4 +1,5 @@
 import {View} from '../utilities/MVC.js'; 
+import {debounce} from '../utilities/utilis.js';
 import mapStyle from '../config/mapStyle.json';
 
 'use strict';
@@ -30,7 +31,7 @@ class MapView extends View {
         const map = this.getModel().get('map').map;
 
         map.addListener('dblclick', event => this.getController().onDbClick(event));
-        google.maps.event.addDomListener(window, 'resize', () => this.getController().onResize());
+        google.maps.event.addDomListener(window, 'resize', debounce(() => this.getController().onResize(), 150));
 
         this.getModel().addEventListener('change-all', () => this.getController().onResize());
     }
@@ -64,7 +65,7 @@ class MapView extends View {
         // add initMap to global env
         window.initMap = initMap;
 
-        // get map code by jsonp
+        // get map code
         scriptTag.setAttribute("src", `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap`);
         document.getElementsByTagName('head')[0].appendChild(scriptTag);
     }

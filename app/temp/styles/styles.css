@@ -417,7 +417,6 @@ template {
 
 html {
   box-sizing: border-box;
-  height: 100%;
   font-size: 62.5%;
   font-family: 'Roboto', sans-serif;
   line-height: normal; }
@@ -425,9 +424,13 @@ html {
 *, *::after, *::before {
   box-sizing: inherit; }
 
+html,
 body {
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAYAAADgzO9IAAAAMElEQVQYV2P8v933/8kLZxjQAeOJdsn/5gYmDOiSYAmQanRJuAS6JIoEsiSGBEwSAOOnHgwjF4tWAAAAAElFTkSuQmCC) repeat;
   height: 100%; }
+
+.html--modal-open {
+  overflow: hidden; }
 
 .switch {
   cursor: pointer;
@@ -583,27 +586,55 @@ body {
     color: #fffffb;
     vertical-align: middle; }
 
-.map {
-  position: relative;
+.error {
+  display: none;
+  position: absolute;
   width: 100%;
-  height: 50rem;
-  margin-top: 1rem;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23); }
-  @media (min-width: 576px) {
-    .map {
-      height: auto;
-      margin: 0.5rem; } }
-  .map > * {
+  height: 100%;
+  top: 0;
+  background-color: rgba(50, 50, 50, 0.6);
+  opacity: 0;
+  transition: opacity 0.2s ease-in; }
+  .error--active {
+    display: flex;
+    align-items: center;
+    justify-content: center; }
+  .error--show {
+    opacity: 1; }
+  .error__content {
+    position: relative;
+    width: 35rem;
+    height: 20rem;
+    background-color: #efefef;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22); }
+  .error__icon {
+    margin: 1.5rem;
+    display: flex;
+    justify-content: center;
+    font-size: 3.4rem;
+    color: #d63737; }
+  .error__title {
     display: block;
+    width: 100%;
+    text-align: center;
+    font-size: 2rem; }
+  .error__info {
+    text-align: center;
+    font-size: 1.5rem; }
+  .error__button {
+    cursor: pointer;
     position: absolute;
-    top: 0;
-    right: 0;
     bottom: 0;
-    left: 0;
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    width: 100%; }
+    width: 100%;
+    height: 3.5rem;
+    background: none;
+    border: none;
+    background-color: #d63737;
+    transition: background-color 0.2s ease-in;
+    font-size: 1.6rem;
+    color: #efefef; }
+    .error__button:focus, .error__button:hover {
+      background-color: #e23d3d; }
 
 .loading-indicator {
   display: none;
