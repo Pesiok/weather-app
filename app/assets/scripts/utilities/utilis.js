@@ -87,8 +87,8 @@ export const parseWeatherInfo = data => {
         },
         humidity: `${data.current.humidity} %`,
         wind: {
-            metric: `${data.current.wind_mph} mph`,
-            imperial: `${data.current.wind_kph} kph`
+            metric: `${data.current.wind_kph} kph`,
+            imperial: `${data.current.wind_mph} mph`
         },
         feelsLike: {
             metric: `${data.current.feelslike_c} &#8451;`,
