@@ -11,6 +11,10 @@
         font-size: 1.3rem;
 
         @include atSmall() {
+            font-size: 1.5rem;
+        }
+
+        @include atMedium() {
             font-size: 1.7rem;
         }
 
@@ -24,6 +28,10 @@
         font-size: 1.2rem;
 
         @include atSmall() {
+            font-size: 1.3rem;
+        }
+        
+        @include atMedium() {
             font-size: 1.5rem;
         }
 

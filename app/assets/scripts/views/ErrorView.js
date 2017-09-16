@@ -33,8 +33,7 @@ class ErrorView extends View {
     }
 
     render(error) {
-        console.log('called');
-        this.getEl().errorInfo.innerHTML = `We were unable to get weather information from given city due to: <em>${error}</em>`;
+        this.getEl().errorInfo.innerHTML = error;
         this.toggleModal()
     }
 }

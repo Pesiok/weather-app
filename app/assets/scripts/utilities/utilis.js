@@ -15,19 +15,25 @@ export const fetchCoords = () => {
         navigator.geolocation.getCurrentPosition(position => {
             resolve([position.coords.latitude, position.coords.longitude]);
         }, error => {
-            reject(new Error('Unable to obtain location!'));
+            const message = `
+                Unable to obtain location! 
+                Please ensure you have enabled geolocation in your device and reload the page, 
+                or type name of the city manually in search field.
+            `
+            reject(new Error(message));
         });
     });
 }
 
 export const parseCoords = coords => {
     return new Promise((resolve, reject) => {
+        const message = 'Inncorent coordinates! Couldn\'t find any matching locations. Please try again.'
         if (coords.length !== 2) {
-            reject(new Error ('Inncorent coordinates!'));
+            reject(new Error (message));
         }  else {
             coords.forEach(coord => {
                 if (typeof coord !== 'number' || Number.isNaN(coord) || !isFinite(coord)) {
-                    reject(new Error ('Inncorent coordinates!'));
+                    reject(new Error (message));
                 }
             });
         }

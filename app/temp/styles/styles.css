@@ -441,11 +441,15 @@ body {
   @media (min-width: 576px) {
     .switch {
       font-size: 1.6rem; } }
-  .switch:focus .switch__indicator, .switch:hover .switch__indicator {
+  .switch:hover .switch__indicator,
+  .switch:hover .switch__name {
     color: #c88719; }
   .switch__checkbox {
     position: absolute;
     opacity: 0; }
+    .switch__checkbox:focus + .switch__indicator,
+    .switch__checkbox:focus ~ .switch__name {
+      color: #c88719; }
   .switch__indicator {
     position: absolute;
     display: block;
@@ -456,9 +460,10 @@ body {
     line-height: 1rem;
     z-index: 0;
     color: #a69b97;
-    transition: color 0.2s ease-in;
     text-align: center;
     user-select: none; }
+  .switch__name, .switch__indicator {
+    transition: color 0.2s ease-in; }
 
 .main {
   display: flex; }
@@ -467,7 +472,8 @@ body {
       height: calc(100% - 8rem); } }
   .main__wrapper {
     display: block;
-    margin: 2rem auto; }
+    margin: 2rem auto;
+    width: 95%; }
     @media (min-width: 576px) {
       .main__wrapper {
         display: flex;
@@ -590,7 +596,7 @@ body {
   display: none;
   position: absolute;
   width: 100%;
-  height: 100%;
+  height: 100vh;
   top: 0;
   background-color: rgba(50, 50, 50, 0.6);
   opacity: 0;
@@ -604,7 +610,7 @@ body {
   .error__content {
     position: relative;
     width: 35rem;
-    height: 20rem;
+    min-height: 24rem;
     background-color: #efefef;
     box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22); }
   .error__icon {
@@ -620,7 +626,8 @@ body {
     font-size: 2rem; }
   .error__info {
     text-align: center;
-    font-size: 1.5rem; }
+    padding: 1rem;
+    font-size: 1.6rem; }
   .error__button {
     cursor: pointer;
     position: absolute;
@@ -731,6 +738,9 @@ body {
     font-size: 1.3rem; }
     @media (min-width: 576px) {
       .weather-details__thead {
+        font-size: 1.5rem; } }
+    @media (min-width: 768px) {
+      .weather-details__thead {
         font-size: 1.7rem; } }
     .weather-details__thead th {
       padding: 0.5rem;
@@ -738,6 +748,9 @@ body {
   .weather-details__tbody {
     font-size: 1.2rem; }
     @media (min-width: 576px) {
+      .weather-details__tbody {
+        font-size: 1.3rem; } }
+    @media (min-width: 768px) {
       .weather-details__tbody {
         font-size: 1.5rem; } }
     .weather-details__tbody td {
@@ -779,6 +792,9 @@ body {
   font-weight: normal;
   font-size: 1.25rem; }
   @media (min-width: 576px) {
+    .weather-timeplace__date {
+      font-size: 1.35rem; } }
+  @media (min-width: 768px) {
     .weather-timeplace__date {
       font-size: 1.5rem; } }
 

@@ -10,9 +10,9 @@
         font-size: 1.6rem;
     }
 
-    &:focus,
     &:hover {
-        .switch__indicator {
+        .switch__indicator,
+        .switch__name {
             color: $secondaryDark;
         }
     }
@@ -21,6 +21,10 @@
         position: absolute;
         opacity: 0;
 
+        &:focus + .switch__indicator,
+        &:focus ~ .switch__name {
+            color: $secondaryDark;
+        }
     }
 
     &__indicator {
@@ -35,10 +39,14 @@
         z-index: 0;
 
         color: $primaryDark;
-        transition: color 0.2s ease-in;
         
         text-align: center;
         user-select: none;
+    }
+
+    &__name,
+    &__indicator {
+        transition: color 0.2s ease-in;
     }
     
    

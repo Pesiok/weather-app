@@ -19,6 +19,10 @@
         font-size: 1.25rem;
 
         @include atSmall() {
+            font-size: 1.35rem;
+        }
+        
+        @include atMedium() {
             font-size: 1.5rem;
         }
         

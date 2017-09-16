@@ -1617,19 +1617,21 @@ var fetchCoords = exports.fetchCoords = function fetchCoords() {
         navigator.geolocation.getCurrentPosition(function (position) {
             resolve([position.coords.latitude, position.coords.longitude]);
         }, function (error) {
-            reject(new Error('Unable to obtain location!'));
+            var message = '\n                Unable to obtain location! \n                Please ensure you have enabled geolocation in your device and reload the page, \n                or type name of the city manually in search field.\n            ';
+            reject(new Error(message));
         });
     });
 };
 
 var parseCoords = exports.parseCoords = function parseCoords(coords) {
     return new Promise(function (resolve, reject) {
+        var message = 'Inncorent coordinates! Couldn\'t find any matching locations. Please try again.';
         if (coords.length !== 2) {
-            reject(new Error('Inncorent coordinates!'));
+            reject(new Error(message));
         } else {
             coords.forEach(function (coord) {
                 if (typeof coord !== 'number' || Number.isNaN(coord) || !isFinite(coord)) {
-                    reject(new Error('Inncorent coordinates!'));
+                    reject(new Error(message));
                 }
             });
         }
@@ -3894,7 +3896,7 @@ var WeatherController = function (_Controller) {
             }).then(function () {
                 model.emitEvent('change-all');
             }).catch(function (error) {
-                return model.emitEvent('get-all-cancel', error);
+                return model.emitEvent('get-all-error', error);
             });
         }
     }, {
@@ -4107,8 +4109,7 @@ var ErrorView = function (_View) {
     }, {
         key: 'render',
         value: function render(error) {
-            console.log('called');
-            this.getEl().errorInfo.innerHTML = 'We were unable to get weather information from given city due to: <em>' + error + '</em>';
+            this.getEl().errorInfo.innerHTML = error;
             this.toggleModal();
         }
     }]);
